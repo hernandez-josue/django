@@ -5,12 +5,24 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ── Variables de entorno ──────────────────────────────────────────────────
-env = environ.Env(DEBUG=(bool, True))
+env = environ.Env(DEBUG=(bool, False))
 environ.Env.read_env(BASE_DIR / '.env')
 
-SECRET_KEY  = env('SECRET_KEY', default='dev-key-insegura-solo-para-desarrollo')
-DEBUG       = env('DEBUG', default=True)
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1'])
+SECRET_KEY = env(
+    'SECRET_KEY',
+    default='dev-clave-segura-para-desarrollo-w01'
+)
+
+DEBUG = env.bool('DEBUG', default=False)
+
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'django-w4le.onrender.com',
+]
+
+
+
 
 # ── Apps instaladas ───────────────────────────────────────────────────────
 INSTALLED_APPS = [

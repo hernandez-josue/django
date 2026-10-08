@@ -9,31 +9,31 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 # Directorio de trabajo
 WORKDIR /app
 
-# Instalar dependencias del sistema necesarias para psycopg2
+# Dependencias del sistema
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev gcc \
     && rm -rf /var/lib/apt/lists/*
 
-# Copiar dependencias Python
+# Dependencias Python
 COPY requirements.txt .
 
-# Instalar dependencias
 RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt
 
-# Copiar el proyecto
+# Copiar proyecto
 COPY . .
 
-# Recolectar archivos estáticos
+# Archivos estáticos
 RUN python manage.py collectstatic --no-input \
     --settings=core.settings \
     || echo "collectstatic con settings base"
 
-# Exponer puerto
+# Puerto
 EXPOSE $PORT
 
-# Ejecutar migraciones y después iniciar Gunicorn
+# Migraciones + creación del administrador + Gunicorn
 CMD python manage.py migrate --no-input && \
+    python manage.py shell -c "import os; from django.contrib.auth import get_user_model; User=get_user_model(); username=os.environ.get('DJANGO_SUPERUSER_USERNAME'); email=os.environ.get('DJANGO_SUPERUSER_EMAIL'); password=os.environ.get('DJANGO_SUPERUSER_PASSWORD'); user,created=User.objects.get_or_create(username=username, defaults={'email':email}); user.email=email; user.is_staff=True; user.is_superuser=True; user.set_password(password); user.save()" && \
     gunicorn core.wsgi \
     --bind 0.0.0.0:$PORT \
     --workers 2 \

@@ -1,20 +1,20 @@
 # Sprint 0 Retrospective — ERP Django
 ## Semanas W01–W03 · Espiral 1
 
-**Fecha:** ___/___/_____
+**Fecha:** __08_/oct___/___2026__
 **Facilitador/Scrum Master:** [Nombre]
 
 ## ¿Qué funcionó bien? (Keep)
-1.
-2.
-3.
+1.todo
+2.todo
+3.todo
 
 ## ¿Qué mejorar? (Improve)
-1.
-2.
+1.nada
+2.nada
 
 ## ¿Qué eliminar? (Drop)
-1.
+1.nada
 
 ## Acción de mejora (Kaizen) para Sprint 1
 > Una sola acción concreta y medible:

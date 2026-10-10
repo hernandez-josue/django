@@ -73,4 +73,4 @@ manage.py check sin errores	✅
 - URL pública: https://erp-django-utec.onrender.com
 - Tests: Ran 33 tests → OK
 - Commits: ≥ 6 en rama main
-- Fecha: ___/___/_____
+- Fecha: 08___/_oct__/____2026_

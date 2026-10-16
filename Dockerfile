@@ -17,8 +17,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Dependencias Python
 COPY requirements.txt .
 
-RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt
+RUN python -m pip install --no-cache-dir --upgrade pip \
+    && python -m pip install --no-cache-dir -r requirements.txt \
+    && python -m pip install --no-cache-dir Pillow==12.3.0 \
+    && python -c "import PIL; from PIL import Image; print('Pillow OK:', PIL.__version__)"
 
 # Copiar proyecto
 COPY . .
@@ -29,12 +31,13 @@ RUN python manage.py collectstatic --no-input \
     || echo "collectstatic con settings base"
 
 # Puerto
-EXPOSE $PORT
+EXPOSE 8000
 
 # Migraciones + creación del administrador + Gunicorn
-CMD python manage.py migrate --no-input && \
+CMD python -m pip show Pillow && \
+    python manage.py migrate --no-input && \
     python manage.py shell -c "import os; from django.contrib.auth import get_user_model; User=get_user_model(); username=os.environ.get('DJANGO_SUPERUSER_USERNAME'); email=os.environ.get('DJANGO_SUPERUSER_EMAIL'); password=os.environ.get('DJANGO_SUPERUSER_PASSWORD'); user,created=User.objects.get_or_create(username=username, defaults={'email':email}); user.email=email; user.is_staff=True; user.is_superuser=True; user.set_password(password); user.save()" && \
-    gunicorn core.wsgi \
+    gunicorn core.wsgi:application \
     --bind 0.0.0.0:$PORT \
     --workers 2 \
     --timeout 120 \

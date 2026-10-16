@@ -13,35 +13,15 @@ SECRET_KEY = env(
     default='dev-clave-segura-para-desarrollo-w01'
 )
 
-DEBUG = env.bool('DEBUG', default=False)
+DEBUG = env.bool('DEBUG', default=True)
 
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
+    'testserver',
     'django-w4le.onrender.com',
 ]
 
-
-
-
-# ── Apps instaladas ───────────────────────────────────────────────────────
-INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    # Terceros
-    'rest_framework',
-    'whitenoise.runserver_nostatic',
-    # Apps del ERP
-    'clientes',
-    'proveedores',
-    'productos',
-    'ventas',
-    'reportes',
-]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -121,24 +101,6 @@ REST_FRAMEWORK = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    # Terceros
-    'rest_framework',
-    'whitenoise.runserver_nostatic',
-    # Apps del ERP
-    'clientes',
-    'proveedores',
-    'productos',
-    'ventas',
-    'reportes',
-    'configuracion',   # ← nueva app W05
-]
 
 # core/settings.py — actualizar INSTALLED_APPS
 INSTALLED_APPS = [

@@ -1,53 +1,25 @@
-# clientes/views.py
-"""Vistas de la app clientes — W02 (placeholder)."""
-from django.shortcuts import render
-
-
-def index(request):
-    """Vista de índice de clientes."""
-    context = {
-        'titulo': 'Clientes',
-        'descripcion': 'Gestión de cartera de clientes.',
-        'espiral': 'Espiral 2 · W04',
-    }
-    return render(request, 'clientes/index.html', context)
-
-# clientes/views.py
-"""Vistas de la app clientes — W07.
-
-Lectura: ListView y DetailView.
-Escritura (Create/Update/Delete): W08.
-"""
-from django.views.generic import DetailView, ListView
-
+from django.views.generic import ListView, DetailView
 from .models import Cliente
 
 
-class ClienteListView(ListView):
-    """Lista paginada de clientes activos."""
-
-    model               = Cliente
-    template_name       = 'clientes/lista.html'
+class ClienteInicioView(ListView):
+    model = Cliente
+    template_name = 'clientes/index.html'
     context_object_name = 'clientes'
-    paginate_by         = 20
+    paginate_by = 20
 
-    def get_queryset(self):
-        return Cliente.objects.filter(activo=True).order_by('nombre')
+
+class ClienteListView(ListView):
+    model = Cliente
+    template_name = 'clientes/lista.html'
+    context_object_name = 'clientes'
+    paginate_by = 20
 
 
 class ClienteDetailView(DetailView):
-    """Detalle de un cliente con su historial de ventas."""
-
-    model               = Cliente
-    template_name       = 'clientes/detalle.html'
+    model = Cliente
+    template_name = 'clientes/detalle.html'
     context_object_name = 'cliente'
-    pk_url_kwarg        = 'cliente_id'
+    pk_url_kwarg = 'cliente_id'
 
-    def get_context_data(self, **kwargs):
-        """Agrega las ventas del cliente al contexto."""
-        ctx = super().get_context_data(**kwargs)
-        ctx['ventas'] = (
-            self.object.ventas
-            .order_by('-fecha')[:10]   # últimas 10 ventas
-        )
-        return ctx
+    

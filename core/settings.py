@@ -83,7 +83,7 @@ STORAGES = {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }  # fuentes adicionales
 
@@ -212,8 +212,8 @@ JAZZMIN_UI_TWEAKS = {
     'sidebar_nav_compact_style': False,
     'sidebar_nav_legacy_style': False,
     'sidebar_nav_flat_style':   False,
-    'theme':                    'default',
-    'dark_mode_theme':          None,
+    'theme': 'flatly',
+    'dark_mode_theme': 'darkly',
     'button_classes': {
         'primary':   'btn-primary',
         'secondary': 'btn-secondary',

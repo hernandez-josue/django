@@ -85,3 +85,7 @@ LOGGING = {
         },
     },
 }
+
+# Evita el conflicto STORAGES vs STATICFILES_STORAGE / DEFAULT_FILE_STORAGE
+for _viejo in ("STATICFILES_STORAGE", "DEFAULT_FILE_STORAGE"):
+    globals().pop(_viejo, None)

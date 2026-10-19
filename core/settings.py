@@ -130,12 +130,11 @@ INSTALLED_APPS = [
 # â”€â”€ JAZZMIN â€” PersonalizaciÃ³n del admin con Fable 5 AzulERP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 JAZZMIN_SETTINGS = {
     # Identidad
-    'site_title':       'ERP Django',
-    'site_header':      'ERP UTEC Celaya',
-    'site_brand':       'ðŸ“¦ ERP Django',
-    'welcome_sign':     'Bienvenido al Sistema ERP Â· UTEC Celaya',
-    'copyright':        'MC. RomÃ¡n Fernando LÃ³pez GonzÃ¡lez Â· UTEC Celaya',
-
+    'site_title':       'ERP Chinito',
+    'site_header':      'ERP Chinito',
+    'site_brand':       'ERP \u9f8d Chinito',
+    'welcome_sign':     'Bienvenido a ERP Chinito',
+    'copyright':        'ERP Chinito',
     # Icono del sitio (usar emoji como fallback)
     'site_icon':        None,
     'site_logo':        None,    # ruta a logo en static/ (agregar en W11+)
@@ -197,15 +196,15 @@ JAZZMIN_UI_TWEAKS = {
     'footer_small_text':        False,
     'body_small_text':          False,
     'brand_small_text':         False,
-    'brand_colour':             'navbar-dark',
-    'accent':                   'accent-navy',
-    'navbar':                   'navbar-dark',
+    'brand_colour':             'navbar-danger',
+    'accent':                   'accent-warning',
+    'navbar':                   'navbar-danger',
     'no_navbar_border':         False,
     'navbar_fixed':             True,
     'layout_boxed':             False,
     'footer_fixed':             False,
     'sidebar_fixed':            True,
-    'sidebar':                  'sidebar-dark-navy',
+    'sidebar':                  'sidebar-dark-danger',
     'sidebar_nav_small_text':   False,
     'sidebar_disable_expand':   False,
     'sidebar_nav_child_indent': True,
@@ -221,6 +220,23 @@ JAZZMIN_UI_TWEAKS = {
         'warning':   'btn-warning',
         'danger':    'btn-danger',
         'success':   'btn-success',
+    },
+}
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "loggers": {
+        "django.request": {
+            "handlers": ["console"],
+            "level": "ERROR",
+            "propagate": False,
+        },
     },
 }
 

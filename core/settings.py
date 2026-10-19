@@ -1,10 +1,10 @@
-# core/settings.py
+﻿# core/settings.py
 import environ
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ── Variables de entorno ──────────────────────────────────────────────────
+# â”€â”€ Variables de entorno â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 env = environ.Env(DEBUG=(bool, False))
 environ.Env.read_env(BASE_DIR / '.env')
 
@@ -36,7 +36,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'core.urls'
 
-# ── Templates ─────────────────────────────────────────────────────────────
+# â”€â”€ Templates â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -53,7 +53,7 @@ TEMPLATES = [
     },
 ]
 
-# ── Base de datos ─────────────────────────────────────────────────────────
+# â”€â”€ Base de datos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -61,22 +61,22 @@ DATABASES = {
     }
 }
 
-# ── Internacionalización ──────────────────────────────────────────────────
+# â”€â”€ InternacionalizaciÃ³n â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 LANGUAGE_CODE = 'es-mx'
 TIME_ZONE     = 'America/Mexico_City'
 USE_I18N      = True
 USE_TZ        = True
 
-# ── Archivos media ────────────────────────────────────────────────────────
+# â”€â”€ Archivos media â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 MEDIA_URL  = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# settings.py — sección de estáticos (verificar, no duplicar)
-STATIC_URL  = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'   # destino de collectstatic
-
-# STATICFILES_DIRS ≠ STATIC_ROOT (error frecuente)
-STATICFILES_DIRS = [BASE_DIR / 'static']  # fuentes adicionales
+# Almacenamiento de archivos y WhiteNoise
+# Almacenamiento compatible con Django 4.2 y WhiteNoise.
+# STATICFILES_DIRS â‰  STATIC_ROOT (error frecuente)
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [BASE_DIR / 'static']
 
 STORAGES = {
     "default": {
@@ -85,14 +85,14 @@ STORAGES = {
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
-}
+}  # fuentes adicionales
 
-# ── Autenticación ─────────────────────────────────────────────────────────
+# â”€â”€ AutenticaciÃ³n â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 LOGIN_URL           = '/accounts/login/'
 LOGIN_REDIRECT_URL  = '/productos/'
 LOGOUT_REDIRECT_URL = '/'
 
-# ── DRF ──────────────────────────────────────────────────────────────────
+# â”€â”€ DRF â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
@@ -102,10 +102,10 @@ REST_FRAMEWORK = {
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# core/settings.py — actualizar INSTALLED_APPS
+# core/settings.py â€” actualizar INSTALLED_APPS
 INSTALLED_APPS = [
-    # Jazzmin PRIMERO — antes de django.contrib.admin
-    'jazzmin',                          # ← nueva línea, primera posición
+    # Jazzmin PRIMERO â€” antes de django.contrib.admin
+    'jazzmin',                          # â† nueva lÃ­nea, primera posiciÃ³n
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -125,25 +125,25 @@ INSTALLED_APPS = [
     'configuracion',
 ]
 
-# core/settings.py — agregar al final del archivo
+# core/settings.py â€” agregar al final del archivo
 
-# ── JAZZMIN — Personalización del admin con Fable 5 AzulERP ───────────────
+# â”€â”€ JAZZMIN â€” PersonalizaciÃ³n del admin con Fable 5 AzulERP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 JAZZMIN_SETTINGS = {
     # Identidad
     'site_title':       'ERP Django',
     'site_header':      'ERP UTEC Celaya',
-    'site_brand':       '📦 ERP Django',
-    'welcome_sign':     'Bienvenido al Sistema ERP · UTEC Celaya',
-    'copyright':        'MC. Román Fernando López González · UTEC Celaya',
+    'site_brand':       'ðŸ“¦ ERP Django',
+    'welcome_sign':     'Bienvenido al Sistema ERP Â· UTEC Celaya',
+    'copyright':        'MC. RomÃ¡n Fernando LÃ³pez GonzÃ¡lez Â· UTEC Celaya',
 
     # Icono del sitio (usar emoji como fallback)
     'site_icon':        None,
     'site_logo':        None,    # ruta a logo en static/ (agregar en W11+)
 
-    # Búsqueda global en el admin
+    # BÃºsqueda global en el admin
     'search_model':     ['clientes.Cliente', 'productos.Producto'],
 
-    # Menú superior (top navigation)
+    # MenÃº superior (top navigation)
     'topmenu_links': [
         {'name': 'Inicio ERP',   'url': '/', 'new_window': False},
         {'name': 'Productos',    'url': '/productos/'},
@@ -151,12 +151,12 @@ JAZZMIN_SETTINGS = {
         {'name': 'Ventas',       'url': '/ventas/'},
     ],
 
-    # Menú de usuario (avatar)
+    # MenÃº de usuario (avatar)
     'usermenu_links': [
         {'name': 'Ver ERP', 'url': '/', 'new_window': False},
     ],
 
-    # Menú lateral: orden de apps y modelos
+    # MenÃº lateral: orden de apps y modelos
     'order_with_respect_to': [
         'clientes', 'proveedores', 'productos',
         'ventas', 'configuracion', 'auth',
@@ -223,4 +223,6 @@ JAZZMIN_UI_TWEAKS = {
         'success':   'btn-success',
     },
 }
+
+
 

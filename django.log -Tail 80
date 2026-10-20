@@ -1,0 +1,35 @@
+[35mstatic/erp_custom.css[m[36m:[m[32m2[m[36m:[m   Utilidades adicionales de [1;31mFable[m 5 [1;31mAzulERP[m.
+[35mstatic/erp_custom.css[m[36m:[m[32m28[m[36m:[m/* ── JAZZMIN: Override de colores con [1;31mFable[m 5 [1;31mAzulERP[m ─────────────────── */
+[35mstaticfiles/admin/css/base.64976e0f7339.css[m[36m:[m[32m2[m[36m:[m    [1;31mDJANGO[m Admin styles
+[35mstaticfiles/admin/css/base.css[m[36m:[m[32m2[m[36m:[m    [1;31mDJANGO[m Admin styles
+[35mstaticfiles/erp_custom.7323a298e1ef.css[m[36m:[m[32m2[m[36m:[m   Utilidades adicionales de [1;31mFable[m 5 [1;31mAzulERP[m.
+[35mstaticfiles/erp_custom.ae8e6f9ae6d7.css[m[36m:[m[32m2[m[36m:[m   Utilidades adicionales de [1;31mFable[m 5 [1;31mAzulERP[m.
+[35mstaticfiles/erp_custom.ae8e6f9ae6d7.css[m[36m:[m[32m28[m[36m:[m/* ── JAZZMIN: Override de colores con [1;31mFable[m 5 [1;31mAzulERP[m ─────────────────── */
+[35mstaticfiles/erp_custom.css[m[36m:[m[32m2[m[36m:[m   Utilidades adicionales de [1;31mFable[m 5 [1;31mAzulERP[m.
+[35mstaticfiles/erp_custom.css[m[36m:[m[32m28[m[36m:[m/* ── JAZZMIN: Override de colores con [1;31mFable[m 5 [1;31mAzulERP[m ─────────────────── */
+[35mstaticfiles/jazzmin/css/main.283a5cbcb6b2.css[m[36m:[m[32m1[m[36m:[m/** [1;31mDjango[m-specific fixes for AdminLTE v4 / Bootstrap 5 UI **/
+[35mstaticfiles/jazzmin/css/main.283a5cbcb6b2.css[m[36m:[m[32m28[m[36m:[m   [1;31mDJANGO[m FORM INLINES - Hide empty extra form rows
+[35mstaticfiles/jazzmin/css/main.283a5cbcb6b2.css[m[36m:[m[32m34[m[36m:[m/* [1;31mDjango[m's .form-row conflicts with Bootstrap - ensure table display */
+[35mstaticfiles/jazzmin/css/main.283a5cbcb6b2.css[m[36m:[m[32m41[m[36m:[m   [1;31mDJANGO[m FORM FIELDS - Style [1;31mDjango[m's widget classes to match Bootstrap
+[35mstaticfiles/jazzmin/css/main.283a5cbcb6b2.css[m[36m:[m[32m103[m[36m:[m/* Style [1;31mDjango[m's plain select elements to match Bootstrap 5 form-select */
+[35mstaticfiles/jazzmin/css/main.283a5cbcb6b2.css[m[36m:[m[32m141[m[36m:[m   [1;31mDJANGO[m CALENDAR & CLOCK WIDGETS
+[35mstaticfiles/jazzmin/css/main.283a5cbcb6b2.css[m[36m:[m[32m213[m[36m:[m   [1;31mDJANGO[m RELATED WIDGET - FK selects with edit/add/view icons
+[35mstaticfiles/jazzmin/css/main.283a5cbcb6b2.css[m[36m:[m[32m232[m[36m:[m   [1;31mDJANGO[m SIDEBAR - Fixed layout scrolling
+[35mstaticfiles/jazzmin/css/main.283a5cbcb6b2.css[m[36m:[m[32m290[m[36m:[m   FORM SPACING - [1;31mDjango[m form-row / form-group
+[35mstaticfiles/jazzmin/css/main.css[m[36m:[m[32m1[m[36m:[m/** [1;31mDjango[m-specific fixes for AdminLTE v4 / Bootstrap 5 UI **/
+[35mstaticfiles/jazzmin/css/main.css[m[36m:[m[32m28[m[36m:[m   [1;31mDJANGO[m FORM INLINES - Hide empty extra form rows
+[35mstaticfiles/jazzmin/css/main.css[m[36m:[m[32m34[m[36m:[m/* [1;31mDjango[m's .form-row conflicts with Bootstrap - ensure table display */
+[35mstaticfiles/jazzmin/css/main.css[m[36m:[m[32m41[m[36m:[m   [1;31mDJANGO[m FORM FIELDS - Style [1;31mDjango[m's widget classes to match Bootstrap
+[35mstaticfiles/jazzmin/css/main.css[m[36m:[m[32m103[m[36m:[m/* Style [1;31mDjango[m's plain select elements to match Bootstrap 5 form-select */
+[35mstaticfiles/jazzmin/css/main.css[m[36m:[m[32m141[m[36m:[m   [1;31mDJANGO[m CALENDAR & CLOCK WIDGETS
+[35mstaticfiles/jazzmin/css/main.css[m[36m:[m[32m213[m[36m:[m   [1;31mDJANGO[m RELATED WIDGET - FK selects with edit/add/view icons
+[35mstaticfiles/jazzmin/css/main.css[m[36m:[m[32m232[m[36m:[m   [1;31mDJANGO[m SIDEBAR - Fixed layout scrolling
+[35mstaticfiles/jazzmin/css/main.css[m[36m:[m[32m290[m[36m:[m   FORM SPACING - [1;31mDjango[m form-row / form-group
+[35mtemplates/base.html[m[36m:[m[32m7[m[36m:[m    <title>{% block title %}ERP [1;31mDjango[m{% endblock %} · [1;31mUTEC[m [1;31mCelaya[m</title>
+[35mtemplates/base.html[m[36m:[m[32m19[m[36m:[m    <!-- [1;31mFable[m 5 [1;31mAzulERP[m — Design System -->
+[35mtemplates/base.html[m[36m:[m[32m254[m[36m:[m    <a class="erp-brand" href="/">📦 ERP [1;31mDjango[m <span>· [1;31mUTEC[m [1;31mCelaya[m</span></a>
+[35mtemplates/base.html[m[36m:[m[32m309[m[36m:[m    ERP [1;31mDjango[m · [1;31mDjango[m 4.2 LTS · [1;31mFable[m 5 [1;31mAzulERP[m · [1;31mUTEC[m [1;31mCelaya[m · Espiral 1
+[35mtemplates/bienvenida.html[m[36m:[m[32m8[m[36m:[m        📦 ERP [1;31mDjango[m
+[35mtemplates/bienvenida.html[m[36m:[m[32m11[m[36m:[m        Sistema de gestión empresarial · [1;31mUTEC[m [1;31mCelaya[m · Espiral 1 W02
+[35mtemplates/bienvenida.html[m[36m:[m[32m14[m[36m:[m        <span class="badge-erp-gold">[1;31mDjango[m 4.2 LTS</span>
+[35mtemplates/bienvenida.html[m[36m:[m[32m16[m[36m:[m        <span class="badge-erp-gold">[1;31mFable[m 5 [1;31mAzulERP[m</span>

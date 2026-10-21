@@ -59,3 +59,43 @@ protegidos por autenticación y 3 roles de acceso.
 | 12 tests de escritura (auth + POST válido/inválido) | ✅ W08 |
 | Login/Logout + LoginRequired ya aplicado | ✅ W08 |
 | 3 roles RBAC (Gerente/Vendedor/Almacén) | ⏳ W09 |
+
+1. Mostrar el flujo de autenticación:
+   → Abrir /productos/ sin login → formularios de solo lectura.
+   → Iniciar sesión como "vendedor_test".
+   → Los botones "Nuevo", "Editar", "Eliminar" aparecen en la UI.
+
+2. Demostrar RBAC en acción:
+   → Como Vendedor: acceder a /ventas/nueva/ → formulario OK (200).
+   → Como Vendedor: acceder a /productos/1/eliminar/ → HTTP 403.
+   → Cerrar sesión. Login como "gerente_test".
+   → Como Gerente: /productos/1/eliminar/ → confirmación visible.
+   → POST confirmar → mensaje flash "Producto eliminado".
+
+3. Mostrar la suite de tests:
+   → python manage.py test tests --verbosity=0
+   → Ran 100 tests … OK
+
+4. Verificar en producción:
+   → Deploy automático en Render.
+   → Ejecutar crear_grupos en la Shell de Render.
+   → URL pública con login funcional.
+
+5. Declarar Sprint Goal verificado:
+   "Al finalizar el Sprint 2, el ERP muestra lista y detalle
+    de las 4 entidades, tiene CRUD completo protegido por
+    autenticación y 3 roles con permisos diferenciados."
+   → Estado: ✅ COMPLETADO
+
+   # Sprint 2 — Estado final W09
+
+| HU | Estado | Pts |
+|---|---|---|
+| HU-E3-01 a HU-E3-09 | ✅ Completadas | 27/27 |
+
+## Hito M3 — ALCANZADO ✅
+- CRUD: 4 módulos con lectura + escritura funcional
+- Auth: allauth con login/logout Fable 5
+- RBAC: 3 grupos (Gerente/Vendedor/Almacén) con permisos
+- Tests: Ran 100 tests → OK
+- Fecha: _21__/__oct_/__26___

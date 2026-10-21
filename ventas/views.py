@@ -10,19 +10,13 @@ from django.views.generic import DeleteView, DetailView, ListView
 
 from .forms  import DetalleVentaForm, VentaForm
 from .models import DetalleVenta, Venta
-<<<<<<< HEAD
 
 from django.shortcuts import render
-=======
->>>>>>> 996cf3682ecfbde6bde1ae2b7bcaaf6092ce5077
+
 
 def inicio(request):
     return render(request, 'ventas/index.html')
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 996cf3682ecfbde6bde1ae2b7bcaaf6092ce5077
 def crear_venta(request):
     """Crea un encabezado de venta con una línea de detalle.
 

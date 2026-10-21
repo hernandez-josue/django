@@ -3,6 +3,7 @@
 Vistas de la aplicación clientes.
 Incluye listado, detalle y operaciones CRUD.
 """
+<<<<<<< HEAD
 from django.shortcuts import render
 
 def inicio(request):
@@ -12,6 +13,8 @@ def inicio(request):
 
 
 
+=======
+>>>>>>> 996cf3682ecfbde6bde1ae2b7bcaaf6092ce5077
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin

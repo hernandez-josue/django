@@ -52,3 +52,51 @@
 
 /* Footer */
 .main-footer { border-top: 2px solid #B8860B; }
+
+:root { --erp-rojo: #8b0000; --erp-oro: #d4a017; }
+.navbar-danger, .main-header { background-color: var(--erp-rojo) !important; }
+.main-sidebar { background-color: #3b0a0a !important; }
+.brand-link { border-bottom: 2px solid var(--erp-oro) !important; }
+.nav-sidebar .nav-link.active { background-color: var(--erp-oro) !important; color: #2b0000 !important; }
+.btn-primary { background-color: var(--erp-rojo); border-color: var(--erp-oro); }
+
+
+/* ===== COLORES ERP: ROJO Y ORO ===== */
+
+:root {
+    --erp-rojo: #8b0000;
+    --erp-oro: #d4a017;
+}
+
+/* Barra superior */
+.navbar-danger,
+.main-header {
+    background-color: var(--erp-rojo) !important;
+}
+
+/* Menú lateral */
+.main-sidebar {
+    background-color: #3b0a0a !important;
+}
+
+/* Marca del sistema */
+.brand-link {
+    border-bottom: 2px solid var(--erp-oro) !important;
+}
+
+/* Opción activa del menú */
+.nav-sidebar .nav-link.active {
+    background-color: var(--erp-oro) !important;
+    color: #2b0000 !important;
+}
+
+/* Botones principales */
+.btn-primary {
+    background-color: var(--erp-rojo) !important;
+    border-color: var(--erp-oro) !important;
+}
+
+/* Pie de página */
+.main-footer {
+    border-top: 2px solid #B8860B !important;
+}

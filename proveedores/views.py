@@ -110,9 +110,13 @@ class ProveedorDeleteView(LoginRequiredMixin, DeleteView):
         nombre   = self.object.nombre
         response = super().form_valid(form)
         messages.success(self.request, f'Proveedor "{nombre}" eliminado.')
+<<<<<<< HEAD
         return response 
 
     from django.shortcuts import render
 
 def inicio(request):
     return render(request, 'proveedores/index.html')
+=======
+        return response
+>>>>>>> 996cf3682ecfbde6bde1ae2b7bcaaf6092ce5077

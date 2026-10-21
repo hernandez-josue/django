@@ -1,0 +1,37 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="fondo" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5a0a0a"/>
+      <stop offset="1" stop-color="#8b1a1a"/>
+    </linearGradient>
+    <pattern id="celosia" width="80" height="80" patternUnits="userSpaceOnUse">
+      <rect width="80" height="80" fill="none"/>
+      <path d="M0 40h80M40 0v80" stroke="#d4a017" stroke-opacity=".12" stroke-width="2"/>
+      <rect x="20" y="20" width="40" height="40" fill="none" stroke="#d4a017" stroke-opacity=".12" stroke-width="2"/>
+    </pattern>
+    <g id="linterna">
+      <line x1="0" y1="-300" x2="0" y2="0" stroke="#d4a017" stroke-width="3"/>
+      <rect x="-22" y="0" width="44" height="12" rx="3" fill="#d4a017"/>
+      <ellipse cx="0" cy="62" rx="58" ry="52" fill="#c0151b"/>
+      <ellipse cx="0" cy="62" rx="30" ry="52" fill="none" stroke="#e8c547" stroke-opacity=".6" stroke-width="2"/>
+      <ellipse cx="0" cy="62" rx="58" ry="52" fill="none" stroke="#e8c547" stroke-width="3"/>
+      <rect x="-22" y="108" width="44" height="12" rx="3" fill="#d4a017"/>
+      <line x1="0" y1="120" x2="0" y2="170" stroke="#d4a017" stroke-width="3"/>
+      <line x1="-8" y1="120" x2="-10" y2="165" stroke="#e8c547" stroke-width="2"/>
+      <line x1="8" y1="120" x2="10" y2="165" stroke="#e8c547" stroke-width="2"/>
+    </g>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#fondo)"/>
+  <rect width="1600" height="900" fill="url(#celosia)"/>
+
+  <circle cx="1300" cy="700" r="260" fill="#d4a017" fill-opacity=".08"/>
+  <circle cx="300" cy="750" r="200" fill="#d4a017" fill-opacity=".08"/>
+
+  <use href="#linterna" transform="translate(160,300)"/>
+  <use href="#linterna" transform="translate(480,250) scale(.8)"/>
+  <use href="#linterna" transform="translate(800,320) scale(1.1)"/>
+  <use href="#linterna" transform="translate(1120,260) scale(.85)"/>
+  <use href="#linterna" transform="translate(1440,310)"/>
+</svg>

@@ -1,3 +1,4 @@
+
 # core/urls.py
 """Enrutador principal del ERP Django — W09."""
 from django.contrib import admin
@@ -18,3 +19,17 @@ urlpatterns = [
     path('ventas/',      include('ventas.urls',       namespace='ventas')),
     path('reportes/',    include('reportes.urls',     namespace='reportes')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Archivos estáticos: habilitar para pruebas locales con DEBUG=False.
+if settings.DEBUG is False:
+    from django.views.static import serve
+
+    urlpatterns += [
+        path(
+            'static/<path:path>',
+            serve,
+            {
+                'document_root': str(settings.STATICFILES_DIRS[0]),
+            },
+        ),
+    ]

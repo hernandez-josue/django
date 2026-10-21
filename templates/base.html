@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es" data-theme="light">
 <head>
@@ -59,12 +60,27 @@
     --shadow-sm  : 0 1px 4px rgba(0,0,0,.3);
     --shadow-md  : 0 4px 16px rgba(0,0,0,.4);
 }
+html { background: #5a0a0a; }
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+        linear-gradient(rgba(255,245,230,.72), rgba(255,245,230,.72)),
+        url("{% static 'img/fondo_restaurante.svg' %}") center / cover no-repeat;
+}
+[data-theme="dark"] body::before {
+    background:
+        linear-gradient(rgba(20,10,10,.65), rgba(20,10,10,.65)),
+        url("{% static 'img/fondo_restaurante.svg' %}") center / cover no-repeat;
+}
         /* BASE */
         *, *::before, *::after { box-sizing: border-box; }
         body {
             font-family: 'Inter','Segoe UI',sans-serif;
             font-size: 15px;
-            background: var(--clr-bg);
+            background: transparent;
             color: var(--clr-text);
             line-height: 1.6;
             transition: background .25s, color .25s;
@@ -309,7 +325,7 @@
 
 <!-- FOOTER -->
 <footer class="erp-footer">
-    Chinos S.A. de C.V. · Inventario · Reportes · Chinos S.A. de C.V. · Espiral 1
+    CHINITO COMIDA CHINA · Inventario · Reportes · CHINITO COMIDA CHINA · Espiral 1
 </footer>
 
 <!-- Bootstrap JS -->

@@ -11,3 +11,4 @@ def index(request):
         'espiral': 'Espiral 7 · W19',
     }
     return render(request, 'reportes/index.html', context)
+

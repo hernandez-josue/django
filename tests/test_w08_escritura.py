@@ -5,14 +5,10 @@ Verifica: redirección sin auth, GET con auth, POST válido,
 
 Ejecutar con:
     python manage.py test tests.test_w08_escritura --verbosity=2
-
-Resultado esperado:
-    Ran 12 tests in X.XXXs
-    OK
 """
 from decimal import Decimal
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Permission, User
 from django.test import Client, TestCase
 from django.urls import reverse
 
@@ -28,6 +24,9 @@ class ProductoEscrituraTest(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
             'testuser', password='testpass123'
+        )
+        self.user.user_permissions.add(
+            Permission.objects.get(codename='delete_producto')
         )
         self.cat  = Categoria.objects.create(nombre='Cat Test')
         self.prod = Producto.objects.create(
@@ -88,6 +87,7 @@ class ProductoEscrituraTest(TestCase):
         r = self.client.post(reverse('productos:crear'), datos)
         self.assertEqual(r.status_code, 200)
         self.assertIn('precio', r.context['form'].errors)
+
     def test_delete_elimina_producto(self):
         """POST /productos/<id>/eliminar/ → borra el producto y redirige."""
         self.client.force_login(self.user)
@@ -164,6 +164,9 @@ class VentaEscrituraTest(TestCase):
 
     def setUp(self):
         self.user = User.objects.create_user('userV', password='pass')
+        self.user.user_permissions.add(
+            Permission.objects.get(codename='add_venta')
+        )
         cat       = Categoria.objects.create(nombre='Cat')
         self.prod = Producto.objects.create(
             nombre='P', precio=Decimal('100.00'), stock=5, categoria=cat

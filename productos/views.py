@@ -1,3 +1,6 @@
+# productos/views.py — actualizar el import al inicio:
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+
 from django.views.generic import ListView, DetailView
 from .models import Producto
 from django.shortcuts import render
@@ -75,23 +78,19 @@ class ProductoUpdateView(LoginRequiredMixin, UpdateView):
         return response
 
 
-class ProductoDeleteView(LoginRequiredMixin, DeleteView):
-    """Confirmación y borrado de un producto.
+# Reemplazar la clase ProductoDeleteView:
 
-    SOLO acepta POST. El template debe incluir
-    un formulario con {% csrf_token %} para evitar CSRF.
-    """
 
-    model         = Producto
+class ProductoDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    model = Producto
     template_name = 'productos/eliminar.html'
-    pk_url_kwarg  = 'producto_id'
-    success_url   = reverse_lazy('productos:lista')
+    pk_url_kwarg = 'producto_id'
+    success_url = reverse_lazy('productos:lista')
+    permission_required = 'productos.delete_producto'
+   
 
     def form_valid(self, form):
-        nombre   = self.object.nombre
+        nombre = self.object.nombre
         response = super().form_valid(form)
-        messages.success(
-            self.request,
-            f'Producto "{nombre}" eliminado.'
-        )
+        messages.success(self.request, f'Producto "{nombre}" eliminado.')
         return response

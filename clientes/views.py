@@ -41,7 +41,7 @@ class ClienteListView(ListView):
     """Muestra los clientes registrados."""
 
     model = Cliente
-    template_name = "clientes/lista.html"
+    template_name = 'clientes/lista.html'
     context_object_name = "clientes"
     paginate_by = 20
 

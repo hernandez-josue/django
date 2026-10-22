@@ -31,3 +31,9 @@
     </form>
 </div>
 {% endblock %}
+
+{% if user.is_authenticated %}
+<td>
+    <a href="{% url 'clientes:editar' c.pk %}" class="btn-erp-primary btn-erp-sm">Editar</a>
+</td>
+{% endif %}

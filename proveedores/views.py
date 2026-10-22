@@ -26,7 +26,7 @@ class ProveedorListView(ListView):
     """Lista paginada de proveedores activos."""
 
     model               = Proveedor
-    template_name = 'proveedores/index.html'
+    template_name = 'proveedores/lista.html'
     context_object_name = 'proveedores'
     paginate_by         = 20
 

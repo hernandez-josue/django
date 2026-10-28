@@ -6,6 +6,8 @@ Orden de implementación:
   2. Producto   (FK → Categoria, FK → Proveedor)  ← Parte 3
 """
 # productos/models.py
+# productos/models.py — agregar al inicio:
+from .validators import validar_imagen_producto
 
 from decimal import Decimal
 
@@ -41,8 +43,6 @@ class Categoria(models.Model):
     
 
     # Agregar después de la clase Categoria en productos/models.py
-
-
 
 class Producto(models.Model):
     """Artículo del inventario del ERP.
@@ -87,8 +87,17 @@ class Producto(models.Model):
     creado    = models.DateTimeField(
         auto_now_add=True, verbose_name='Fecha de registro'
     )
-    
+    # En la clase Producto — agregar campo imagen:
 
+    # Actualizar el campo imagen en la clase Producto:
+    imagen = models.ImageField(
+        upload_to='productos/',
+        null=True,
+        blank=True,
+        verbose_name='Imagen del producto',
+        help_text='Formatos: JPEG, PNG, WEBP. Máximo 5 MB.',
+        validators=[validar_imagen_producto],   # ← agregar
+    )
     class Meta:
         verbose_name        = 'Producto'
         verbose_name_plural = 'Productos'

@@ -9,8 +9,7 @@
 
 <div class="erp-card" style="max-width:640px;">
     <div class="erp-card-header">Datos del producto</div>
-    <form method="post" style="margin-top:.5rem;">
-        {% csrf_token %}
+    <form method="post" enctype="multipart/form-data" style="margin-top:.5rem;">
         {% for field in form %}
         <div class="mb-4">
             <label class="erp-label">{{ field.label }}</label>

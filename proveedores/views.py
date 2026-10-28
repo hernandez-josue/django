@@ -1,10 +1,18 @@
-# proveedores/views.py
-"""Vistas de la app proveedores — W02 (placeholder)."""
+"""Vistas de la app proveedores."""
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
+from django.urls import reverse_lazy
+from django.views.generic import (
+    CreateView, DeleteView, DetailView, ListView, UpdateView
+)
+
+from .forms import ProveedorForm
+from .models import Proveedor
 
 
 def index(request):
-    """Vista de índice de proveedores."""
+    """Vista de índice de proveedores (placeholder W02)."""
     context = {
         'titulo': 'Proveedores',
         'descripcion': 'Red de proveedores de mercancía.',
@@ -12,26 +20,27 @@ def index(request):
     }
     return render(request, 'proveedores/index.html', context)
 
-# proveedores/views.py
-"""Vistas de la app proveedores — W07.
 
-Lectura: ListView y DetailView.
-"""
-from django.views.generic import DetailView, ListView
-
-from .models import Proveedor
+def inicio(request):
+    return render(request, 'proveedores/index.html')
 
 
 class ProveedorListView(ListView):
     """Lista paginada de proveedores activos."""
 
     model               = Proveedor
-    template_name = 'proveedores/lista.html'
+    template_name       = 'proveedores/lista.html'
     context_object_name = 'proveedores'
     paginate_by         = 20
 
     def get_queryset(self):
         return Proveedor.objects.filter(activo=True).order_by('nombre')
+
+
+class ProveedorInicioView(ProveedorListView):
+    """Página inicial: igual que la lista, pero con index.html."""
+
+    template_name = 'proveedores/index.html'
 
 
 class ProveedorDetailView(DetailView):
@@ -43,7 +52,6 @@ class ProveedorDetailView(DetailView):
     pk_url_kwarg        = 'proveedor_id'
 
     def get_context_data(self, **kwargs):
-        """Agrega los productos del proveedor al contexto."""
         ctx = super().get_context_data(**kwargs)
         ctx['productos'] = (
             self.object.productos
@@ -52,15 +60,6 @@ class ProveedorDetailView(DetailView):
             .order_by('nombre')
         )
         return ctx
-    
-    # proveedores/views.py — agregar imports al inicio:
-from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
-from django.views.generic import (
-    CreateView, DeleteView, DetailView, ListView, UpdateView
-)
-from .forms import ProveedorForm
 
 
 class ProveedorCreateView(LoginRequiredMixin, CreateView):
@@ -107,15 +106,7 @@ class ProveedorDeleteView(LoginRequiredMixin, DeleteView):
     success_url   = reverse_lazy('proveedores:lista')
 
     def form_valid(self, form):
-        nombre   = self.object.nombre
+        nombre = self.object.nombre
         response = super().form_valid(form)
         messages.success(self.request, f'Proveedor "{nombre}" eliminado.')
-
-        return response 
-
-    from django.shortcuts import render
-
-def inicio(request):
-    return render(request, 'proveedores/index.html')
-
-
+        return response

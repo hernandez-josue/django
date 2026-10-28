@@ -66,6 +66,11 @@ class VentaListView(ListView):
 
     def get_queryset(self):
         return Venta.objects.select_related('cliente').order_by('-fecha')
+    
+class VentaInicioView(VentaListView):
+    """Página inicial: igual que la lista, pero con index.html."""
+
+    template_name = 'ventas/index.html'
 
 
 class VentaDetailView(DetailView):

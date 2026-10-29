@@ -1,7 +1,24 @@
-/* static/erp_custom.css
-   Utilidades adicionales de Fable 5 AzulERP.
-   Las variables CSS principales están definidas en base.html.
-*/
+/* static/erp_custom.css  — ARCHIVO ÚNICO
+   1) Utilidades base
+   2) Tema rojo y oro del admin (Jazzmin 3 / AdminLTE 4)
+   3) Ornamentos de comida china para contenedores (admin + sitio)
+   Lo carga el admin (custom_css) y el sitio (link en base.html). */
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap');
+
+:root{
+  --rojo:#8B0000; --rojo-osc:#5E0B0B; --oro:#C9A227;
+  --crema:#F6EDE0; --tinta:#2A1A17;
+  --display:'Great Vibes','Playfair Display',cursive;
+
+  --cn-oro:#C9A227;
+  --cn-rojo:#8B0000;
+  --cn-rojo-osc:#5E0B0B;
+  --cn-display:var(--font-display,'Great Vibes','Playfair Display',cursive);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   1) UTILIDADES BASE
+   ══════════════════════════════════════════════════════════════ */
 
 /* Tarjetas clicables en la bienvenida */
 .erp-module-card {
@@ -25,30 +42,315 @@
     font-size: .9em;
 }
 
-/* ── JAZZMIN: Override de colores con Fable 5 AzulERP ─────────────────── */
+/* ══════════════════════════════════════════════════════════════
+   2) TEMA ROJO Y ORO — ADMIN
+   ══════════════════════════════════════════════════════════════ */
 
-/* Sidebar color navy */
-.main-sidebar, .sidebar { background-color: #0A2342 !important; }
-
-/* Navbar color navy */
-.main-header.navbar { background-color: #0A2342 !important; }
-
-/* Brand / logo area */
-.brand-link { border-bottom: 1px solid #B8860B !important; }
-.brand-text  { color: #D4AF37 !important; font-weight: 700 !important; }
-
-/* Sidebar links */
-.nav-sidebar .nav-link { color: rgba(255,255,255,.82) !important; }
-.nav-sidebar .nav-link:hover,
-.nav-sidebar .nav-link.active {
-    background-color: #1B4F8A !important;
-    color: #FFFFFF !important;
+/* Barra superior */
+.app-header.navbar{
+  background:linear-gradient(90deg,var(--rojo-osc),var(--rojo)) !important;
+  border-bottom:3px solid var(--oro) !important;
+  box-shadow:0 4px 16px rgba(139,0,0,.25);
+}
+.app-header .nav-link,
+.app-header .navbar-nav .nav-link{
+  color:var(--crema) !important;
+  font-weight:500;
+  letter-spacing:.02em;
+}
+.app-header .nav-link:hover{ color:var(--oro) !important; }
+.app-header .form-control-navbar{
+  border:1.5px solid var(--oro) !important;
+  border-radius:8px 0 0 8px;
+}
+.app-header .btn-navbar{
+  background:var(--rojo-osc) !important;
+  color:var(--crema) !important;
+  border:1.5px solid var(--oro) !important;
 }
 
-/* Accent: botones y badges en dorado */
-.accent-navy .nav-sidebar .nav-link.active {
-    background-color: #B8860B !important;
+/* Menú lateral */
+.app-sidebar{
+  background:var(--tinta) !important;
+  border-right:2px solid var(--oro);
+}
+.sidebar-brand{
+  background:var(--rojo-osc) !important;
+  border-bottom:2px solid var(--oro) !important;
+}
+.sidebar-brand .brand-link,
+.sidebar-brand .brand-text{ color:var(--oro) !important; }
+.sidebar-brand .brand-text{
+  font-family:var(--display);
+  font-size:1.9rem;
+  font-weight:400 !important;
+  letter-spacing:.01em;
+}
+.sidebar-menu .nav-header{
+  color:var(--oro) !important;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  font-size:.72rem;
+}
+.sidebar-menu .nav-link{
+  color:rgba(246,237,224,.88) !important;
+  border-radius:8px;
+  transition:background .2s, color .2s;
+}
+.sidebar-menu .nav-link:hover{
+  background:rgba(201,162,39,.18) !important;
+  color:#fff !important;
+}
+.sidebar-menu .nav-link.active{
+  background:var(--rojo) !important;
+  color:#fff !important;
+  border-left:3px solid var(--oro);
+  box-shadow:0 2px 8px rgba(0,0,0,.35);
+}
+.user-panel .info a{ color:var(--crema) !important; }
+
+/* Contenido */
+.app-main{ background:var(--crema); }
+[data-bs-theme="dark"] .app-main{ background:#1C1212; }
+
+.app-content-header h3,
+.app-content-header h1{
+  font-family:var(--display);
+  font-size:2.7rem;
+  font-weight:400;
+  color:var(--rojo-osc);
+}
+[data-bs-theme="dark"] .app-content-header h3,
+[data-bs-theme="dark"] .app-content-header h1{ color:var(--oro); }
+
+.breadcrumb a{ color:var(--rojo) !important; }
+
+/* Links (antes verdes) */
+.app-main a:not(.btn):not(.nav-link):not(.dropdown-item){ color:var(--rojo); transition:color .2s; }
+.app-main a:not(.btn):not(.nav-link):not(.dropdown-item):hover{ color:var(--oro); }
+[data-bs-theme="dark"] .app-main a:not(.btn):not(.nav-link):not(.dropdown-item){ color:#E6A0A0; }
+
+/* Tarjetas del admin */
+.card{
+  border:0 !important;
+  border-top:3px solid var(--oro) !important;
+  border-radius:12px !important;
+  box-shadow:0 2px 10px rgba(139,0,0,.10);
+  transition:transform .2s, box-shadow .2s;
+}
+.card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 8px 22px rgba(139,0,0,.18);
+}
+.card-header{
+  background:transparent !important;
+  border-bottom:1px solid rgba(201,162,39,.45) !important;
+}
+.card-header h5,
+.card-header h3,
+.card-header .card-title{
+  font-family:var(--display);
+  font-size:1.9rem;
+  font-weight:400;
+  color:var(--rojo-osc);
+  margin:0;
+}
+[data-bs-theme="dark"] .card-header h5,
+[data-bs-theme="dark"] .card-header h3,
+[data-bs-theme="dark"] .card-header .card-title{ color:var(--oro); }
+
+/* Acciones recientes */
+#recent-actions-module h4{
+  font-family:var(--display);
+  font-size:2.1rem;
+  font-weight:400;
+  color:var(--rojo-osc);
+}
+[data-bs-theme="dark"] #recent-actions-module h4{ color:var(--oro); }
+
+/* Botones */
+.btn-success{
+  background:var(--oro) !important;
+  border-color:var(--oro) !important;
+  color:var(--tinta) !important;
+  font-weight:600;
+}
+.btn-success:hover{ filter:brightness(1.08); }
+.btn-info,
+.btn-primary{
+  background:var(--rojo) !important;
+  border-color:var(--rojo) !important;
+  color:#fff !important;
+}
+.btn-info:hover,
+.btn-primary:hover{ background:var(--rojo-osc) !important; border-color:var(--rojo-osc) !important; }
+
+/* Tablas y formularios del admin */
+.table thead th{
+  background:var(--rojo) !important;
+  color:#fff !important;
+  text-transform:uppercase;
+  font-size:.8rem;
+  letter-spacing:.06em;
+}
+.form-control:focus,
+.form-select:focus{
+  border-color:var(--rojo) !important;
+  box-shadow:0 0 0 .2rem rgba(139,0,0,.18) !important;
+}
+.page-item.active .page-link{
+  background:var(--rojo) !important;
+  border-color:var(--rojo) !important;
+  color:#fff !important;
 }
 
-/* Footer */
-.main-footer { border-top: 2px solid #B8860B; }
+/* Miniaturas de producto en el admin */
+.field-imagen_preview img{
+  border:2px solid var(--oro);
+  border-radius:8px;
+}
+
+/* Pie de página del admin */
+.app-footer{
+  background:var(--rojo-osc) !important;
+  color:var(--crema) !important;
+  border-top:2px solid var(--oro) !important;
+  font-family:'Playfair Display',Georgia,serif;
+  font-style:italic;
+}
+.app-footer a,
+.app-footer b,
+.app-footer strong{ color:var(--oro) !important; }
+
+/* ══════════════════════════════════════════════════════════════
+   3) ORNAMENTOS DE COMIDA CHINA (admin + sitio)
+   ══════════════════════════════════════════════════════════════ */
+
+/* Marco dorado interior + celosía china tenue */
+.erp-card,
+.erp-module-card,
+.erp-prod,
+.card{
+  position:relative;
+  outline:1px solid rgba(201,162,39,.55);
+  outline-offset:-7px;
+  background-image:
+    repeating-linear-gradient( 45deg, transparent 0 15px, rgba(201,162,39,.055) 15px 16px),
+    repeating-linear-gradient(-45deg, transparent 0 15px, rgba(201,162,39,.055) 15px 16px);
+}
+
+/* Esquinas decoradas */
+.erp-card::before,
+.erp-module-card::before,
+.card::before{
+  content:""; position:absolute; top:-3px; left:-3px;
+  width:16px; height:16px;
+  border-top:3px solid var(--cn-oro);
+  border-left:3px solid var(--cn-oro);
+  border-top-left-radius:6px;
+  pointer-events:none; z-index:2;
+}
+.erp-card::after,
+.erp-module-card::after,
+.card::after{
+  content:""; position:absolute; bottom:-3px; right:-3px;
+  width:16px; height:16px;
+  border-bottom:3px solid var(--cn-oro);
+  border-right:3px solid var(--cn-oro);
+  border-bottom-right-radius:6px;
+  pointer-events:none; z-index:2;
+}
+
+/* Adorno ❖ antes de cada título de tarjeta */
+.erp-card-header::before{
+  content:"❖";
+  color:var(--cn-oro);
+  font-family:serif; font-style:normal;
+  margin-right:.65rem; font-size:.8em;
+}
+.card-header h5::before,
+.card-header h3::before,
+.card-header .card-title::before{
+  content:"❖";
+  color:var(--cn-oro);
+  font-family:serif; font-style:normal;
+  margin-right:.6rem; font-size:.5em; vertical-align:middle;
+}
+
+/* Tarjetas de la portada */
+.erp-module-card{
+  text-align:center;
+  border-top:4px solid var(--cn-rojo) !important;
+  transition:transform .25s, box-shadow .25s, border-color .25s;
+}
+.erp-module-card:hover{
+  transform:translateY(-6px);
+  border-color:var(--cn-oro) !important;
+  box-shadow:0 14px 30px rgba(139,0,0,.28), 0 0 0 2px rgba(201,162,39,.55);
+}
+.erp-module-card :is(h2,h3,h4,h5,strong,.titulo){
+  font-family:var(--cn-display);
+  font-style:var(--display-style,normal);
+  font-size:2rem;
+  font-weight:400;
+  letter-spacing:.01em;
+  color:var(--clr-navy,#8B0000);
+}
+[data-theme="dark"] .erp-module-card :is(h2,h3,h4,h5,strong,.titulo){
+  color:var(--clr-amber,#E8C547);
+}
+
+/* Tarjetas de producto */
+.erp-prod{ transition:transform .25s, box-shadow .25s; }
+.erp-prod:hover{
+  box-shadow:0 12px 26px rgba(139,0,0,.25), 0 0 0 2px rgba(201,162,39,.5);
+}
+
+/* Nombres de campo en las fichas (Categoría, Precio, Stock…) */
+.erp-card dl dt{
+  color:var(--clr-gold,#B8860B);
+  text-transform:uppercase;
+  font-size:.75rem;
+  letter-spacing:.08em;
+  font-weight:600;
+}
+
+/* Tablas: doble filete dorado */
+.erp-table thead th,
+.table thead th{
+  border-bottom:4px double var(--cn-oro) !important;
+}
+
+/* Accesibilidad: sin movimiento si el usuario lo pide */
+@media (prefers-reduced-motion: reduce){
+  .erp-module-card:hover, .erp-prod:hover, .card:hover{ transform:none !important; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   4) TODO EN CURSIVA — ADMIN (solo páginas con data-bs-theme)
+   ══════════════════════════════════════════════════════════════ */
+html[data-bs-theme]{
+  --bs-body-font-family:'Dancing Script','Great Vibes',cursive;
+  --font-family-primary:'Dancing Script',cursive;
+}
+html[data-bs-theme] body{
+  font-family:'Dancing Script',cursive;
+  font-size:1.1rem;
+  font-weight:500;
+}
+html[data-bs-theme] :is(input,select,textarea,button,.btn,.form-control,.form-select,.table,.nav-link,.dropdown-item,.breadcrumb,.badge,label){
+  font-family:inherit;
+}
+html[data-bs-theme] :is(h1,h2,h3,h4){
+  font-family:var(--display);
+  font-weight:400;
+}
+html[data-bs-theme] :is(.nav-header,.table thead th,label){
+  text-transform:none;
+  letter-spacing:.02em;
+}
+html[data-bs-theme] .table thead th{ font-size:1.05rem; }
+html[data-bs-theme] .sidebar-menu .nav-header{ font-size:1rem; }
+html[data-bs-theme] :is(code,pre,kbd,.font-mono){
+  font-family:'JetBrains Mono',Consolas,monospace;
+}

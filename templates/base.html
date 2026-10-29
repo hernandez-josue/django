@@ -1,110 +1,163 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="es" data-theme="light">
+<html lang="es" data-theme="light" data-font="cursiva">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#0A2342">
-    <title>{% block title %}Chinos S.A. de C.V.{% endblock %} · Chinos S.A. de C.V.</title>
+    <meta name="theme-color" content="#8B0000">
+    <title>{% block title %}Inicio{% endblock %} · Chinos S.A. de C.V.</title>
 
-    <!-- Google Fonts: Playfair Display + Inter + JetBrains Mono -->
+    <!-- Aplica tema y tipo de letra guardados ANTES de pintar (evita parpadeo) -->
+    <script>
+    (function () {
+        try {
+            var h = document.documentElement;
+            h.setAttribute('data-theme', localStorage.getItem('erpTheme') || 'light');
+            h.setAttribute('data-font',  localStorage.getItem('erpFont')  || 'cursiva');
+        } catch (e) {}
+    })();
+    </script>
+
+    <!-- Google Fonts: Great Vibes (cursiva) + Cormorant + Playfair + Inter + JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600;700&family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
           rel="stylesheet">
 
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
           rel="stylesheet">
 
-    <!-- Reportes — Design System -->
+    <!-- Design System — Rojo y Oro -->
     <style>
-        /* TOKENS MODO DÍA */
         /* TOKENS MODO DÍA — ROJO Y ORO */
-/* TOKENS MODO DÍA — ROJO Y ORO */
-:root, [data-theme="light"] {
-    --clr-navy   : #8B0000;
-    --clr-royal  : #A52A2A;
-    --clr-sky    : #CD5C5C;
-    --clr-ice    : #F8E8E8;
-    --clr-gold   : #B8860B;
-    --clr-amber  : #D4A017;
-    --clr-cream  : #FFF5D6;
-    --clr-bg     : #F8F5F2;
-    --clr-surface: #FFFFFF;
-    --clr-text   : #2B1717;
-    --clr-muted  : #756060;
-    --clr-border : #E3C8B8;
-    --clr-danger : #C0392B;
-    --clr-ok     : #1A7A4A;
-    --shadow-sm  : 0 1px 4px rgba(139,0,0,.08);
-    --shadow-md  : 0 4px 16px rgba(139,0,0,.12);
-}
+        :root, [data-theme="light"] {
+            --clr-navy   : #8B0000;
+            --clr-royal  : #A52A2A;
+            --clr-sky    : #CD5C5C;
+            --clr-ice    : #F8E8E8;
+            --clr-gold   : #B8860B;
+            --clr-amber  : #D4A017;
+            --clr-cream  : #FFF5D6;
+            --clr-bg     : #F8F5F2;
+            --clr-surface: #FFFFFF;
+            --clr-text   : #2B1717;
+            --clr-muted  : #756060;
+            --clr-border : #E3C8B8;
+            --clr-danger : #C0392B;
+            --clr-ok     : #1A7A4A;
+            --shadow-sm  : 0 1px 4px rgba(139,0,0,.08);
+            --shadow-md  : 0 4px 16px rgba(139,0,0,.12);
+        }
 
-/* TOKENS MODO NOCHE — ROJO Y ORO */
-[data-theme="dark"] {
-    --clr-navy   : #3B0A0A;
-    --clr-royal  : #6B1515;
-    --clr-sky    : #E6A0A0;
-    --clr-ice    : #352020;
-    --clr-gold   : #D4AF37;
-    --clr-amber  : #E8C547;
-    --clr-cream  : #302615;
-    --clr-bg     : #1C1212;
-    --clr-surface: #291B1B;
-    --clr-text   : #F5EAEA;
-    --clr-muted  : #C2A8A8;
-    --clr-border : #593838;
-    --clr-danger : #E74C3C;
-    --clr-ok     : #2ECC71;
-    --shadow-sm  : 0 1px 4px rgba(0,0,0,.3);
-    --shadow-md  : 0 4px 16px rgba(0,0,0,.4);
-}
-html { background: #5a0a0a; }
-body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    background:
-        linear-gradient(rgba(255,245,230,.72), rgba(255,245,230,.72)),
-        url("{% static 'img/fondo_restaurante.svg' %}") center / cover no-repeat;
-}
-[data-theme="dark"] body::before {
-    background:
-        linear-gradient(rgba(20,10,10,.65), rgba(20,10,10,.65)),
-        url("{% static 'img/fondo_restaurante.svg' %}") center / cover no-repeat;
-}
+        /* TOKENS MODO NOCHE — ROJO Y ORO */
+        [data-theme="dark"] {
+            --clr-navy   : #3B0A0A;
+            --clr-royal  : #6B1515;
+            --clr-sky    : #E6A0A0;
+            --clr-ice    : #352020;
+            --clr-gold   : #D4AF37;
+            --clr-amber  : #E8C547;
+            --clr-cream  : #302615;
+            --clr-bg     : #1C1212;
+            --clr-surface: #291B1B;
+            --clr-text   : #F5EAEA;
+            --clr-muted  : #C2A8A8;
+            --clr-border : #593838;
+            --clr-danger : #E74C3C;
+            --clr-ok     : #2ECC71;
+            --shadow-sm  : 0 1px 4px rgba(0,0,0,.3);
+            --shadow-md  : 0 4px 16px rgba(0,0,0,.4);
+        }
+
+        /* TIPO DE LETRA (lo cambia el botón "Aa") */
+        :root {
+            --font-display: 'Playfair Display', Georgia, serif; --display-style: normal;
+            --font-body: 'Inter','Segoe UI',sans-serif; --body-size: 15px;
+            --body-style: normal; --body-weight: 400;
+        }
+        html[data-font="cursiva"] {
+            --font-display: 'Great Vibes', 'Playfair Display', cursive; --display-style: normal;
+            --font-body: 'Dancing Script', 'Great Vibes', cursive; --body-size: 17px;
+            --body-style: normal; --body-weight: 500;
+        }
+        html[data-font="italica"] {
+            --font-display: 'Playfair Display', Georgia, serif; --display-style: italic;
+            --font-body: 'Cormorant Garamond', Georgia, serif; --body-size: 17.5px;
+            --body-style: italic; --body-weight: 500;
+        }
+        html[data-font="clasica"] {
+            --font-display: 'Playfair Display', Georgia, serif; --display-style: normal;
+            --font-body: 'Inter','Segoe UI',sans-serif; --body-size: 15px;
+            --body-style: normal; --body-weight: 400;
+        }
+
+        /* FONDO */
+        html { background: #5a0a0a; }
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background:
+                linear-gradient(rgba(255,245,230,.72), rgba(255,245,230,.72)),
+                url("{% static 'img/fondo_restaurante.svg' %}") center / cover no-repeat;
+        }
+        [data-theme="dark"] body::before {
+            background:
+                linear-gradient(rgba(20,10,10,.65), rgba(20,10,10,.65)),
+                url("{% static 'img/fondo_restaurante.svg' %}") center / cover no-repeat;
+        }
+
         /* BASE */
         *, *::before, *::after { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
         body {
-            font-family: 'Inter','Segoe UI',sans-serif;
-            font-size: 15px;
+            font-family: var(--font-body);
+            font-size: var(--body-size);
+            font-style: var(--body-style);
+            font-weight: var(--body-weight);
             background: transparent;
             color: var(--clr-text);
             line-height: 1.6;
             transition: background .25s, color .25s;
             margin: 0;
         }
+
         /* NAVBAR */
         .erp-navbar {
             background: var(--clr-navy);
             border-bottom: 3px solid var(--clr-gold);
-            padding: .65rem 1.5rem;
+            padding: .55rem 1.5rem;
             display: flex; align-items: center;
             justify-content: space-between; flex-wrap: wrap; gap: .5rem;
             box-shadow: var(--shadow-md);
+            position: sticky; top: 0; z-index: 1000;
         }
         .erp-brand {
-            font-family: 'Playfair Display',Georgia,serif;
+            font-family: var(--font-display);
+            font-style: var(--display-style);
             font-size: 1.3rem; font-weight: 700;
-            color: var(--clr-gold) !important;
+            color: var(--clr-amber) !important;
             text-decoration: none; letter-spacing: .04em;
+            display: flex; align-items: center; gap: .6rem;
         }
-        .erp-brand span { color: rgba(255,255,255,.7); font-weight: 300; font-size: .85em; }
+        .erp-brand .sello {
+            width: 34px; height: 34px; border-radius: 50%;
+            border: 2px solid var(--clr-amber);
+            display: inline-flex; align-items: center; justify-content: center;
+            font-family: 'Playfair Display', serif; font-style: normal;
+            font-size: 1.1rem; line-height: 1; color: var(--clr-amber);
+        }
+        .erp-brand span.sub {
+            font-family: 'Inter', sans-serif; font-style: normal;
+            color: rgba(255,255,255,.7); font-weight: 300; font-size: .7rem;
+            letter-spacing: .12em; text-transform: uppercase;
+            border-left: 1px solid rgba(255,255,255,.3); padding-left: .6rem;
+        }
         .erp-nav-links { display: flex; align-items: center; gap: .25rem; flex-wrap: wrap; }
         .erp-nav-link {
-            color: rgba(255,255,255,.82) !important;
+            color: rgba(255,255,255,.85) !important;
             font-size: .88rem; font-weight: 500;
             padding: .35rem .75rem; border-radius: 6px;
             text-decoration: none;
@@ -112,6 +165,7 @@ body::before {
         }
         .erp-nav-link:hover, .erp-nav-link.active {
             background: var(--clr-royal); color: #FFF !important;
+            box-shadow: inset 0 -2px 0 var(--clr-amber);
         }
         .theme-toggle {
             background: var(--clr-gold); color: var(--clr-navy);
@@ -120,26 +174,31 @@ body::before {
             cursor: pointer; transition: transform .2s;
         }
         .theme-toggle:hover { transform: rotate(20deg); }
+        #fontBtn { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700; font-size: .85rem; margin-left: .15rem; }
+
         /* CONTENIDO */
         .erp-main { padding: 2rem 0; min-height: calc(100vh - 110px); }
+
         /* CARDS */
         .erp-card {
             background: var(--clr-surface);
             border: 1px solid var(--clr-border);
             border-radius: 12px; box-shadow: var(--shadow-sm);
             padding: 1.5rem; margin-bottom: 1.5rem;
-            transition: box-shadow .2s;
+            transition: box-shadow .2s, transform .2s;
         }
-        .erp-card:hover { box-shadow: var(--shadow-md); }
+        .erp-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
         .erp-card-header {
             background: var(--clr-navy); color: #FFF;
             border-radius: 10px 10px 0 0;
             padding: .85rem 1.25rem;
             border-left: 5px solid var(--clr-gold);
-            font-family: 'Playfair Display',serif;
+            font-family: var(--font-display);
+            font-style: var(--display-style);
             font-size: 1.05rem; letter-spacing: .03em;
             margin: -1.5rem -1.5rem 1.5rem;
         }
+
         /* TABLAS */
         .erp-table {
             width: 100%; border-collapse: separate; border-spacing: 0;
@@ -154,30 +213,32 @@ body::before {
         .erp-table tbody td {
             background: var(--clr-surface); padding: .65rem 1rem;
             border-bottom: 1px solid var(--clr-border); font-size: .9rem;
+            vertical-align: middle;
         }
         .erp-table tbody tr:nth-child(even) td { background: var(--clr-ice); }
-        .erp-table tbody tr:hover td { background: rgba(74,144,217,.08); }
+        .erp-table tbody tr:hover td { background: rgba(184,134,11,.12); }
         .erp-table tfoot td {
             background: var(--clr-cream); color: var(--clr-gold);
             font-weight: 700; border-top: 2px solid var(--clr-gold);
         }
+
         /* BOTONES */
         .btn-erp-primary {
             background: var(--clr-navy); color: #FFF;
             border: 2px solid var(--clr-gold); border-radius: 8px;
             padding: .45rem 1.2rem; font-weight: 600; font-size: .88rem;
             cursor: pointer; text-decoration: none; display: inline-block;
-            transition: background .2s, color .2s;
+            transition: background .2s, color .2s, transform .15s;
         }
-        .btn-erp-primary:hover { background: var(--clr-gold); color: var(--clr-navy); }
+        .btn-erp-primary:hover { background: var(--clr-gold); color: var(--clr-navy); transform: translateY(-1px); }
         .btn-erp-gold {
-            background: var(--clr-gold); color: var(--clr-navy);
+            background: var(--clr-gold); color: #FFF;
             border: 2px solid var(--clr-navy); border-radius: 8px;
             padding: .45rem 1.2rem; font-weight: 700;
             cursor: pointer; text-decoration: none; display: inline-block;
-            transition: background .2s;
+            transition: background .2s, transform .15s;
         }
-        .btn-erp-gold:hover { background: var(--clr-amber); }
+        .btn-erp-gold:hover { background: var(--clr-amber); color: var(--clr-navy); transform: translateY(-1px); }
         .btn-erp-danger {
             background: var(--clr-danger); color: #FFF; border: none;
             border-radius: 8px; padding: .4rem 1rem;
@@ -185,6 +246,7 @@ body::before {
             cursor: pointer; text-decoration: none; display: inline-block;
         }
         .btn-erp-sm { padding: .25rem .7rem; font-size: .8rem; }
+
         /* FORMULARIOS */
         .erp-label {
             font-size: .83rem; font-weight: 600; color: var(--clr-muted);
@@ -199,8 +261,24 @@ body::before {
         }
         .erp-input:focus {
             outline: none; border-color: var(--clr-sky);
-            box-shadow: 0 0 0 3px rgba(74,144,217,.18);
+            box-shadow: 0 0 0 3px rgba(139,0,0,.18);
         }
+        /* Campo de archivo (imagen del producto) */
+        input[type="file"].erp-input { padding: .4rem; cursor: pointer; }
+        input[type="file"]::file-selector-button {
+            background: var(--clr-gold); color: #FFF;
+            border: 0; border-radius: 6px;
+            padding: .4rem .9rem; margin-right: .8rem;
+            font-weight: 600; cursor: pointer; transition: background .2s;
+        }
+        input[type="file"]::file-selector-button:hover { background: var(--clr-navy); }
+        .erp-preview {
+            display: none; max-height: 200px; max-width: 100%;
+            margin-top: .6rem; border-radius: 10px;
+            border: 2px solid var(--clr-gold); box-shadow: var(--shadow-sm);
+            object-fit: cover;
+        }
+
         /* BADGES */
         .badge-erp-active {
             background: rgba(26,122,74,.12); color: var(--clr-ok);
@@ -219,6 +297,7 @@ body::before {
             font-size: .75rem; padding: .2rem .7rem;
             border-radius: 20px; font-weight: 700;
         }
+
         /* ALERTAS */
         .erp-alert-danger {
             background: rgba(192,57,43,.08); border: 1px solid rgba(192,57,43,.3);
@@ -235,17 +314,25 @@ body::before {
             border-left: 5px solid var(--clr-ok); border-radius: 8px;
             padding: 1rem 1.25rem;
         }
-        /* TÍTULO DE PÁGINA */
+
+        /* TÍTULO DE PÁGINA (con filete dorado) */
         .erp-page-title {
+            position: relative;
             display: flex; align-items: center; gap: 1rem;
-            margin-bottom: 1.5rem; padding-bottom: .75rem;
+            margin-bottom: 1.75rem; padding-bottom: .75rem;
             border-bottom: 2px solid var(--clr-border);
         }
+        .erp-page-title::after {
+            content: ""; position: absolute; left: 0; bottom: -2px;
+            width: 110px; height: 2px; background: var(--clr-gold);
+        }
         .erp-page-title h2 {
-            font-family: 'Playfair Display',serif;
+            font-family: var(--font-display);
+            font-style: var(--display-style);
             font-size: 1.6rem; color: var(--clr-navy); margin: 0;
         }
         [data-theme="dark"] .erp-page-title h2 { color: var(--clr-sky); }
+
         /* CÓDIGO */
         code, .mono {
             font-family: 'JetBrains Mono',Consolas,monospace;
@@ -254,15 +341,164 @@ body::before {
         }
         [data-theme="dark"] code,
         [data-theme="dark"] .mono {
-            color: var(--clr-sky); background: rgba(74,144,217,.12);
+            color: var(--clr-sky); background: rgba(230,160,160,.12);
         }
+
         /* FOOTER */
         .erp-footer {
-            background: var(--clr-navy); color: rgba(255,255,255,.6);
-            text-align: center; font-size: .78rem;
-            padding: .75rem; border-top: 2px solid var(--clr-gold);
+            background: var(--clr-navy); color: rgba(255,255,255,.75);
+            text-align: center; font-size: .95rem; letter-spacing: .03em;
+            font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic;
+            padding: .8rem; border-top: 2px solid var(--clr-gold);
+        }
+        .erp-footer b { color: var(--clr-amber); font-weight: 600; }
+
+        /* ═══ ESTILO GLOBAL DE TÍTULOS (portada, tarjetas, producto) ═══ */
+        .erp-main :is(h1, h2, h3) {
+            font-family: var(--font-display);
+            font-style: var(--display-style);
+        }
+        .erp-prod-nombre {
+            font-family: var(--font-display) !important;
+            font-style: var(--display-style);
+        }
+
+        /* Great Vibes solo tiene un grosor y es más pequeña: se ajusta tamaño */
+        html[data-font="cursiva"] .erp-brand           { font-size: 1.8rem; font-weight: 400; letter-spacing: .01em; }
+        html[data-font="cursiva"] .erp-page-title h2   { font-size: 2.4rem; font-weight: 400; }
+        html[data-font="cursiva"] .erp-card-header     { font-size: 1.5rem; font-weight: 400; letter-spacing: .01em; }
+        html[data-font="cursiva"] .erp-main :is(h1, h2, h3) { font-weight: 400; }
+        html[data-font="cursiva"] .erp-prod-nombre     { font-size: 1.5rem; font-weight: 400; }
+
+        /* Modo noche: títulos legibles (antes salían rojo oscuro sobre oscuro) */
+        [data-theme="dark"] .erp-main :is(h1, h2, h3, h4, h5, h6),
+        [data-theme="dark"] .card-title { color: var(--clr-amber); }
+
+        /* ═══ TODO EN CURSIVA: ajustes de tamaño para que se lea bien ═══ */
+        html[data-font="cursiva"] .erp-nav-link { font-size: 1.12rem; }
+        html[data-font="cursiva"] :is(.erp-label, .erp-card dl dt, .erp-table thead th, .erp-prod-cat) {
+            text-transform: none; letter-spacing: .02em; font-size: 1.05rem;
+        }
+        html[data-font="cursiva"] .erp-table tbody td { font-size: 1.05rem; }
+        html[data-font="cursiva"] :is(.btn-erp-primary, .btn-erp-gold, .btn-erp-danger) { font-size: 1.05rem; letter-spacing: .02em; }
+        html[data-font="cursiva"] :is(.badge-erp-active, .badge-erp-inactive, .badge-erp-gold) { font-size: .9rem; }
+        html[data-font="cursiva"] .erp-input { font-size: 1.08rem; }
+        html[data-font="cursiva"] .erp-brand span.sub { font-family: var(--font-body); text-transform: none; font-size: 1rem; letter-spacing: .03em; }
+        html[data-font="cursiva"] .erp-footer { font-family: var(--font-body); font-style: normal; font-size: 1.1rem; }
+
+        /* ═══ ORNAMENTOS DE COMIDA CHINA (autosuficiente, sin depender de otro archivo) ═══ */
+        .erp-card, .erp-module-card, .erp-prod {
+            position: relative;
+            outline: 1px solid rgba(201,162,39,.55);
+            outline-offset: -7px;
+            background-image:
+                repeating-linear-gradient( 45deg, transparent 0 15px, rgba(201,162,39,.055) 15px 16px),
+                repeating-linear-gradient(-45deg, transparent 0 15px, rgba(201,162,39,.055) 15px 16px);
+        }
+        .erp-card::before, .erp-module-card::before {
+            content: ""; position: absolute; top: -3px; left: -3px; width: 16px; height: 16px;
+            border-top: 3px solid #C9A227; border-left: 3px solid #C9A227;
+            border-top-left-radius: 6px; pointer-events: none; z-index: 2;
+        }
+        .erp-card::after, .erp-module-card::after {
+            content: ""; position: absolute; bottom: -3px; right: -3px; width: 16px; height: 16px;
+            border-bottom: 3px solid #C9A227; border-right: 3px solid #C9A227;
+            border-bottom-right-radius: 6px; pointer-events: none; z-index: 2;
+        }
+        .erp-card-header::before {
+            content: "❖"; color: #C9A227; font-family: serif; font-style: normal;
+            margin-right: .65rem; font-size: .8em;
+        }
+        .erp-module-card {
+            text-align: center; border-top: 4px solid #8B0000 !important;
+            transition: transform .25s, box-shadow .25s, border-color .25s;
+        }
+        .erp-module-card:hover {
+            transform: translateY(-6px); border-color: #C9A227 !important;
+            box-shadow: 0 14px 30px rgba(139,0,0,.28), 0 0 0 2px rgba(201,162,39,.55);
+        }
+        .erp-prod:hover { box-shadow: 0 12px 26px rgba(139,0,0,.25), 0 0 0 2px rgba(201,162,39,.5); }
+        .erp-card dl dt { color: var(--clr-gold); font-weight: 600; letter-spacing: .04em; }
+        .erp-table thead th { border-bottom: 4px double #C9A227; }
+
+        /* Títulos de cualquier tamaño en letra de título */
+        .erp-main :is(h4, h5, h6) { font-family: var(--font-display); font-style: var(--display-style); }
+        html[data-font="cursiva"] .erp-main :is(h4, h5, h6) { font-weight: 400; font-size: 1.8rem; }
+        html[data-font="cursiva"] .erp-table tbody td { padding: .8rem 1rem; }
+
+        /* Links dentro de tablas */
+        .erp-link { color: var(--clr-royal); font-weight: 600; text-decoration: none; }
+        .erp-link:hover { text-decoration: underline; color: var(--clr-gold); }
+        .erp-table a:not([class*="btn-erp"]) { text-decoration: none; }
+        .erp-table a:not([class*="btn-erp"]):hover { text-decoration: underline; }
+
+        /* MODO NOCHE: títulos y links legibles (antes salían rojo oscuro sobre oscuro) */
+        [data-theme="dark"] .erp-main :is(h1,h2,h3,h4,h5,h6,strong,b,.card-title,[class*="title"],[class*="titulo"]) {
+            color: var(--clr-amber) !important;
+        }
+        [data-theme="dark"] .erp-table a:not([class*="btn-erp"]),
+        [data-theme="dark"] .erp-main a.erp-link {
+            color: var(--clr-amber) !important;
+        }
+
+        /* ═══ TARJETAS AUTOMÁTICAS (Clientes, Proveedores, Ventas) + selector de vista ═══ */
+        .vista-switch { display: inline-flex; gap: .25rem; margin: 0 0 1rem; }
+        .vista-switch button {
+            background: var(--clr-surface); color: var(--clr-navy);
+            border: 1.5px solid var(--clr-gold); border-radius: 8px;
+            padding: .25rem .8rem; font-weight: 600; cursor: pointer;
+        }
+        .vista-switch button.on { background: var(--clr-navy); color: #FFF; }
+        [data-theme="dark"] .vista-switch button { color: var(--clr-amber); }
+        [data-theme="dark"] .vista-switch button.on { color: #FFF; }
+
+        .erp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.25rem; }
+        .erp-auto-card {
+            position: relative; display: flex; flex-direction: column; overflow: hidden;
+            background-color: var(--clr-surface);
+            border: 1px solid var(--clr-border); border-top: 3px solid var(--clr-gold);
+            border-radius: 12px; box-shadow: var(--shadow-sm);
+            outline: 1px solid rgba(201,162,39,.55); outline-offset: -7px;
+            background-image:
+                repeating-linear-gradient( 45deg, transparent 0 15px, rgba(201,162,39,.055) 15px 16px),
+                repeating-linear-gradient(-45deg, transparent 0 15px, rgba(201,162,39,.055) 15px 16px);
+            transition: transform .25s, box-shadow .25s;
+        }
+        .erp-auto-card:hover { transform: translateY(-4px); box-shadow: 0 12px 26px rgba(139,0,0,.25), 0 0 0 2px rgba(201,162,39,.5); }
+        .erp-auto-top {
+            height: 92px; background: var(--clr-cream);
+            display: flex; align-items: center; justify-content: center; font-size: 2.8rem;
+        }
+        .erp-auto-body { padding: .9rem 1.1rem 1.1rem; display: flex; flex-direction: column; gap: .35rem; flex: 1; }
+        .erp-auto-title {
+            font-family: var(--font-display); font-style: var(--display-style);
+            font-size: 1.5rem; line-height: 1.2; color: var(--clr-navy); margin-bottom: .25rem;
+        }
+        html[data-font="cursiva"] .erp-auto-title { font-size: 1.9rem; font-weight: 400; }
+        .erp-auto-title a { color: inherit !important; text-decoration: none; }
+        [data-theme="dark"] .erp-auto-title { color: var(--clr-amber); }
+        .erp-auto-row {
+            display: flex; justify-content: space-between; gap: .75rem;
+            border-bottom: 1px dashed var(--clr-border); padding: .2rem 0;
+        }
+        .erp-auto-row .k { color: var(--clr-gold); font-weight: 600; }
+        .erp-auto-row .v { text-align: right; }
+        .erp-auto-actions { margin-top: auto; padding-top: .7rem; display: flex; gap: .4rem; flex-wrap: wrap; }
+        [data-theme="dark"] .erp-auto-card a:not([class*="btn-erp"]) { color: var(--clr-amber) !important; }
+
+        /* ANIMACIÓN SUAVE AL CARGAR */
+        @keyframes erpFade {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: none; }
+        }
+        .erp-main .container > * { animation: erpFade .5s ease both; }
+        @media (prefers-reduced-motion: reduce) {
+            .erp-main .container > * { animation: none; }
+            .erp-card:hover, .btn-erp-primary:hover, .btn-erp-gold:hover { transform: none; }
         }
     </style>
+    <!-- Tema rojo y oro + ornamentos de comida china -->
+    <link rel="stylesheet" href="{% static 'erp_custom.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
 
@@ -270,7 +506,11 @@ body::before {
 
 <!-- NAVBAR -->
 <nav class="erp-navbar">
-    <a class="erp-brand" href="/">📦 Chinos S.A. de C.V. <span>· Chinos S.A. de C.V.</span></a>
+    <a class="erp-brand" href="/">
+        <span class="sello">龍</span>
+        Chinos S.A. de C.V.
+        <span class="sub">Sistema de gestión</span>
+    </a>
 
     <div class="erp-nav-links">
         <a href="{% url 'productos:lista' %}"
@@ -298,6 +538,7 @@ body::before {
             <a href="/accounts/login/" class="erp-nav-link">Entrar</a>
         {% endif %}
 
+        <button class="theme-toggle" id="fontBtn" title="Cambiar tipo de letra">Aa</button>
         <button class="theme-toggle" id="themeBtn" title="Modo claro/oscuro">🌙</button>
     </div>
 </nav>
@@ -325,31 +566,221 @@ body::before {
 
 <!-- FOOTER -->
 <footer class="erp-footer">
-    CHINITO COMIDA CHINA · Inventario · Reportes · CHINITO COMIDA CHINA · Espiral 1
+    <b>Chinos S.A. de C.V.</b> · Sistema de gestión empresarial · Inventario · Ventas · Reportes · © {% now "Y" %}
 </footer>
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
 </script>
 
-<!-- Toggle modo noche -->
+<!-- Botones: modo noche y tipo de letra -->
 <script>
 (function () {
-    var btn  = document.getElementById('themeBtn');
-    var html = document.documentElement;
-    var icons = { light: '🌙', dark: '☀️' };
-    var saved = localStorage.getItem('erpTheme') || 'light';
-    html.setAttribute('data-theme', saved);
-    if (btn) btn.textContent = icons[saved];
-    if (btn) {
-        btn.addEventListener('click', function () {
-            var current = html.getAttribute('data-theme');
-            var next    = current === 'light' ? 'dark' : 'light';
+    var html    = document.documentElement;
+    var themeB  = document.getElementById('themeBtn');
+    var fontB   = document.getElementById('fontBtn');
+    var icons   = { light: '🌙', dark: '☀️' };
+    var fuentes = ['cursiva', 'italica', 'clasica'];
+    var nombres = { cursiva: 'Cursiva', italica: 'Itálica', clasica: 'Clásica' };
+
+    function guardar(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+
+    var tema = html.getAttribute('data-theme') || 'light';
+    if (themeB) {
+        themeB.textContent = icons[tema];
+        themeB.addEventListener('click', function () {
+            var next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
             html.setAttribute('data-theme', next);
-            btn.textContent = icons[next];
-            localStorage.setItem('erpTheme', next);
+            themeB.textContent = icons[next];
+            guardar('erpTheme', next);
         });
     }
+
+    if (fontB) {
+        var f0 = html.getAttribute('data-font') || 'cursiva';
+        fontB.title = 'Letra: ' + nombres[f0] + ' (clic para cambiar)';
+        fontB.addEventListener('click', function () {
+            var actual = html.getAttribute('data-font') || 'cursiva';
+            var sig = fuentes[(fuentes.indexOf(actual) + 1) % fuentes.length];
+            html.setAttribute('data-font', sig);
+            fontB.title = 'Letra: ' + nombres[sig] + ' (clic para cambiar)';
+            guardar('erpFont', sig);
+        });
+    }
+})();
+</script>
+
+<!-- Vista previa de imagen en cualquier campo de subida de imágenes -->
+<script>
+(function () {
+    document.querySelectorAll('input[type="file"]').forEach(function (inp) {
+        if (!/image/.test(inp.getAttribute('accept') || '')) return;
+
+        var img = document.createElement('img');
+        img.className = 'erp-preview';
+        img.alt = 'Vista previa de la imagen';
+        inp.insertAdjacentElement('afterend', img);
+
+        inp.addEventListener('change', function () {
+            var f = inp.files && inp.files[0];
+            if (!f) { img.style.display = 'none'; return; }
+            if (f.size > 5 * 1024 * 1024) {
+                alert('La imagen supera el máximo de 5 MB.');
+                inp.value = '';
+                img.style.display = 'none';
+                return;
+            }
+            img.src = URL.createObjectURL(f);
+            img.style.display = 'block';
+        });
+    });
+})();
+</script>
+<!-- Formularios con subida de archivo: garantiza multipart/form-data (para que la foto sí se guarde) -->
+<script>
+(function () {
+    document.querySelectorAll('form').forEach(function (f) {
+        if (f.querySelector('input[type="file"]')) {
+            f.setAttribute('enctype', 'multipart/form-data');
+            f.setAttribute('method', 'post');
+        }
+    });
+})();
+</script>
+<!-- Token CSRF de respaldo: se copia a formularios POST que no lo traigan -->
+<div id="erpCsrf" hidden>{% csrf_token %}</div>
+
+<!-- Formularios: muestra por qué no se envía + repara botón fuera del form -->
+<script>
+(function () {
+    try {
+        document.querySelectorAll('form').forEach(function (f) {
+            var banner = null, nombres = [];
+            f.addEventListener('invalid', function (e) {
+                var el = e.target;
+                var lab = el.id ? f.querySelector('label[for="' + el.id + '"]') : null;
+                var nom = ((lab && lab.textContent) || el.name || 'campo').trim();
+                if (nombres.indexOf(nom) < 0) nombres.push(nom);
+                el.style.outline = '2px solid #C0392B';
+                if (!banner) {
+                    banner = document.createElement('div');
+                    banner.className = 'erp-alert-danger';
+                    banner.style.marginBottom = '1rem';
+                    f.insertBefore(banner, f.firstChild);
+                }
+                banner.textContent = 'No se pudo enviar el formulario. Revisa estos campos: ' + nombres.join(', ') + '.';
+            }, true);
+            f.addEventListener('input', function (e) { e.target.style.outline = ''; }, true);
+            f.addEventListener('change', function (e) { e.target.style.outline = ''; }, true);
+            f.addEventListener('submit', function () {
+                if (banner) { banner.remove(); banner = null; nombres = []; }
+            });
+        });
+
+        var tok = document.querySelector('#erpCsrf input[name="csrfmiddlewaretoken"]');
+        if (tok && tok.value) {
+            document.querySelectorAll('form').forEach(function (f) {
+                var m = (f.getAttribute('method') || 'get').toLowerCase();
+                if (m === 'post' && !f.querySelector('input[name="csrfmiddlewaretoken"]')) {
+                    var h = document.createElement('input');
+                    h.type = 'hidden'; h.name = 'csrfmiddlewaretoken'; h.value = tok.value;
+                    f.appendChild(h);
+                }
+            });
+        }
+
+        var formsMain = document.querySelectorAll('.erp-main form');
+        if (formsMain.length === 1) {
+            var fm = formsMain[0];
+            if (!fm.id) fm.id = 'erpMainForm';
+            document.querySelectorAll('.erp-main button[type="submit"], .erp-main input[type="submit"]').forEach(function (b) {
+                if (!b.form) b.setAttribute('form', fm.id);
+            });
+        }
+    } catch (e) {}
+})();
+</script>
+
+<!-- Clientes / Proveedores / Ventas: misma vista de tarjetas que Productos (la tabla se conserva) -->
+<script>
+(function () {
+    try {
+        if (!/\/(clientes|proveedores|ventas|pedidos)\b/.test(location.pathname)) return;
+        var icono = /clientes/.test(location.pathname) ? '👤'
+                  : /proveedores/.test(location.pathname) ? '🏭' : '🧾';
+
+        function guardar(v) { try { localStorage.setItem('erpVista', v); } catch (e) {} }
+        function leer() { try { return localStorage.getItem('erpVista') || 'cards'; } catch (e) { return 'cards'; } }
+        function vacio(td) { return !td.textContent.trim() && !td.querySelector('a,img,button,span'); }
+
+        document.querySelectorAll('table.erp-table').forEach(function (tbl) {
+            if (tbl.tFoot || tbl.closest('#vistaWrap')) return;
+            var heads = Array.prototype.map.call(tbl.querySelectorAll('thead th'), function (th) { return th.textContent.trim(); });
+            var rows = Array.prototype.slice.call(tbl.querySelectorAll('tbody tr'));
+            if (!heads.length || !rows.length) return;
+            if (rows.length === 1 && rows[0].children.length === 1) return;
+
+            var esId = function (h) { return /^(#|id|n[°º.]?)$/i.test(h); };
+            var esAcc = function (h) { return /acciones|opciones/i.test(h); };
+            var grid = document.createElement('div');
+            grid.className = 'erp-grid erp-auto-cards';
+
+            rows.forEach(function (tr) {
+                var cells = Array.prototype.slice.call(tr.children);
+                var card = document.createElement('div'); card.className = 'erp-auto-card';
+                var top = document.createElement('div'); top.className = 'erp-auto-top'; top.textContent = icono;
+                var body = document.createElement('div'); body.className = 'erp-auto-body';
+                var titulo = document.createElement('div'); titulo.className = 'erp-auto-title';
+                var acc = document.createElement('div'); acc.className = 'erp-auto-actions';
+
+                var tIdx = -1;
+                cells.forEach(function (td, i) {
+                    var h = heads[i] || '';
+                    if (tIdx < 0 && !esId(h) && !esAcc(h) && !vacio(td)) tIdx = i;
+                });
+
+                cells.forEach(function (td, i) {
+                    var h = heads[i] || '';
+                    if (esId(h)) return;
+                    var destino;
+                    if (i === tIdx) {
+                        destino = titulo;
+                    } else if (esAcc(h)) {
+                        destino = acc;
+                    } else {
+                        var fila = document.createElement('div'); fila.className = 'erp-auto-row';
+                        var k = document.createElement('span'); k.className = 'k'; k.textContent = h;
+                        var v = document.createElement('span'); v.className = 'v';
+                        fila.appendChild(k); fila.appendChild(v); body.appendChild(fila);
+                        destino = v;
+                    }
+                    if (vacio(td)) { destino.textContent = '\u2014'; return; }
+                    Array.prototype.forEach.call(td.childNodes, function (n) { destino.appendChild(n.cloneNode(true)); });
+                });
+
+                body.insertBefore(titulo, body.firstChild);
+                if (acc.children.length || acc.textContent.trim()) body.appendChild(acc);
+                card.appendChild(top); card.appendChild(body); grid.appendChild(card);
+            });
+
+            var sw = document.createElement('div');
+            sw.className = 'vista-switch';
+            sw.innerHTML = '<button type="button" class="b-c">\u25A6 Tarjetas</button><button type="button" class="b-t">\u2630 Tabla</button>';
+            tbl.parentNode.insertBefore(sw, tbl);
+            tbl.parentNode.insertBefore(grid, tbl);
+
+            function aplicar(v) {
+                grid.style.display = v === 'cards' ? '' : 'none';
+                tbl.style.display = v === 'cards' ? 'none' : '';
+                sw.querySelector('.b-c').classList.toggle('on', v === 'cards');
+                sw.querySelector('.b-t').classList.toggle('on', v === 'tabla');
+                guardar(v);
+            }
+            sw.querySelector('.b-c').addEventListener('click', function () { aplicar('cards'); });
+            sw.querySelector('.b-t').addEventListener('click', function () { aplicar('tabla'); });
+            aplicar(leer() === 'tabla' ? 'tabla' : 'cards');
+        });
+    } catch (e) {}
 })();
 </script>
 {% block extra_js %}{% endblock %}

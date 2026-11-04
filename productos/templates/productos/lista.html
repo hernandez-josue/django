@@ -81,7 +81,8 @@
 <div id="vistaWrap" data-vista="cards">
 
     <!-- VISTA TARJETAS -->
-    <div class="vista-cards">
+    <p style="margin:12px 0;"><a href="{% url 'productos:exportar_excel' %}" style="display:inline-block;background:#5E0B0B;color:#F6E7C1;border:2px solid #C9A227;padding:6px 14px;border-radius:6px;font-style:italic;text-decoration:none;">Exportar a Excel</a></p>
+<div class="vista-cards">
         <div class="erp-grid">
             {% for p in productos %}
             <div class="erp-prod">

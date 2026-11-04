@@ -94,3 +94,51 @@ class ProductoDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView
         response = super().form_valid(form)
         messages.success(self.request, f'Producto "{nombre}" eliminado.')
         return response
+
+# ── Exportación a Excel (W12) ─────────────────────────────────────
+from django.contrib.auth.decorators import login_required as _login_required
+from django.http import HttpResponse as _HttpResponse
+from openpyxl import Workbook as _Workbook
+from openpyxl.styles import Alignment, Font, PatternFill
+from openpyxl.utils import get_column_letter
+from .models import Producto as _Producto
+
+
+@_login_required
+def exportar_excel(request):
+    wb = _Workbook()
+    ws = wb.active
+    ws.title = 'Productos'
+    ws.append(['ID', 'Nombre', 'Categoria', 'Precio', 'Stock'])
+    for p in _Producto.objects.select_related('categoria').order_by('nombre'):
+        ws.append([
+            p.pk,
+            p.nombre,
+            p.categoria.nombre if p.categoria else '',
+            float(p.precio),
+            p.stock,
+        ])
+
+    relleno = PatternFill('solid', start_color='5E0B0B')
+    for celda in ws[1]:
+        celda.font = Font(bold=True, color='F6E7C1')
+        celda.fill = relleno
+        celda.alignment = Alignment(horizontal='center')
+
+    for fila in ws.iter_rows(min_row=2, min_col=4, max_col=4):
+        for celda in fila:
+            celda.number_format = '$#,##0.00'
+
+    ws.freeze_panes = 'A2'
+    ws.auto_filter.ref = ws.dimensions
+
+    for i, columna in enumerate(ws.columns, start=1):
+        ancho = max(len(str(c.value)) if c.value is not None else 0 for c in columna)
+        ws.column_dimensions[get_column_letter(i)].width = min(ancho + 3, 50)
+
+    response = _HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename="productos.xlsx"'
+    wb.save(response)
+    return response

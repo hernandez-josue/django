@@ -154,7 +154,7 @@ JAZZMIN_SETTINGS = {
     'site_header':   'ERP Chinito',
     'site_brand':    'ERP \u9f8d Chinito',
     'welcome_sign':  'Bienvenido al sistema de gestión · \u6b61\u8fce',
-    'copyright':     'Chinos S.A. de C.V.',
+    "copyright": "Chinos S.A. de C.V. - Josue David Hernandez Mendoza",
     'site_icon':     None,
     'site_logo':     None,
 

@@ -5,6 +5,8 @@
 {% block content %}
 <div class="erp-page-title">
     <h2>💰 Venta #{{ venta.pk }}</h2>
+<p style="margin:12px 0;"><a href="{% url 'ventas:pdf' venta.pk %}" style="display:inline-block;background:#5E0B0B;color:#F6E7C1;border:2px solid #C9A227;padding:6px 14px;border-radius:6px;font-style:italic;text-decoration:none;">Crear PDF de la factura</a></p>
+
     {% if user.is_authenticated %}
         <a href="{% url 'ventas:eliminar' venta.pk %}"
            class="btn-erp-danger ms-auto">Eliminar venta</a>

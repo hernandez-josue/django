@@ -1,25 +1,120 @@
-"""Vistas de la app ventas."""
-from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.auth.decorators import (
-    login_required,
-    permission_required,
-)
+﻿"""Vistas de la app ventas."""
+from decimal import ROUND_HALF_UP, Decimal
+from io import BytesIO
+from pathlib import Path
+from urllib.parse import unquote, urlparse
+
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect, render
+from django.contrib.staticfiles import finders
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.views.generic import DeleteView, DetailView, ListView
+from xhtml2pdf import pisa
+
+from configuracion.models import ConfiguracionERP
 
 from .forms import DetalleVentaForm, VentaForm
 from .models import DetalleVenta, Venta
 
 
+# ── Utilidades del PDF ────────────────────────────────────────────
+
+def _ruta_local(url_path):
+    '''Traduce /static/... o /media/... a un archivo en disco (o None).'''
+    static_prefix = '/' + settings.STATIC_URL.lstrip('/')
+    media_prefix = '/' + settings.MEDIA_URL.lstrip('/')
+
+    if url_path.startswith(static_prefix):
+        relativa = url_path[len(static_prefix):]
+        if settings.STATIC_ROOT:
+            candidata = Path(settings.STATIC_ROOT) / relativa
+            if candidata.is_file():
+                return candidata
+        encontrada = finders.find(relativa)  # funciona sin collectstatic
+        return Path(encontrada) if encontrada else None
+
+    if url_path.startswith(media_prefix):
+        raiz = Path(settings.MEDIA_ROOT).resolve()
+        candidata = (raiz / url_path[len(media_prefix):]).resolve()
+        # Evita salir de MEDIA_ROOT con rutas tipo ../
+        if raiz in candidata.parents and candidata.is_file():
+            return candidata
+    return None
+
+
+def _link_callback(uri, rel):
+    '''xhtml2pdf llama a esta funcion por cada imagen/CSS del HTML.'''
+    ruta = _ruta_local(unquote(urlparse(uri).path))
+    return str(ruta) if ruta is not None else uri
+
+
+def _logo_url(config):
+    '''URL del logo solo si existe; si no, se omite sin romper el PDF.'''
+    if not config.logo:
+        return ''
+    try:
+        url = config.logo.url
+    except ValueError:
+        return ''
+    if url.startswith(('http://', 'https://')):
+        return url  # media externa (S3)
+    return url if _ruta_local(unquote(urlparse(url).path)) else ''
+
+
+def calcular_totales(subtotal, iva_porcentaje):
+    '''Subtotal, IVA y total con 2 decimales (redondeo comercial).'''
+    centavos = Decimal('0.01')
+    subtotal = Decimal(subtotal).quantize(centavos, ROUND_HALF_UP)
+    iva = (subtotal * Decimal(iva_porcentaje) / 100).quantize(centavos, ROUND_HALF_UP)
+    return {'subtotal': subtotal, 'iva': iva, 'total_con_iva': subtotal + iva}
+
+
+@login_required
+def venta_pdf(request, venta_id):
+    '''Genera y descarga la factura de una venta en PDF (motor: xhtml2pdf).'''
+    venta = get_object_or_404(
+        Venta.objects.select_related('cliente').prefetch_related(
+            'detalles__producto__categoria'
+        ),
+        pk=venta_id,
+    )
+    config = ConfiguracionERP.get_instance()
+    context = {
+        'venta': venta,
+        'config': config,
+        'logo_url': _logo_url(config),
+        'hoy': timezone.localdate(),
+        **calcular_totales(venta.total, config.iva_porcentaje),
+    }
+
+    html_string = render_to_string('ventas/factura_pdf.html', context, request=request)
+
+    buffer = BytesIO()
+    resultado = pisa.CreatePDF(
+        src=html_string,
+        dest=buffer,
+        encoding='utf-8',
+        link_callback=_link_callback,
+    )
+    if resultado.err:
+        return HttpResponse('No se pudo generar el PDF.', status=500)
+
+    response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="factura_{venta.pk:05d}.pdf"'
+    return response
+
+
+# ── Vistas originales ─────────────────────────────────────────────
+
 def inicio(request):
     return render(request, 'ventas/index.html')
 
-
-# Eliminar la función crear_venta de W08 y reemplazar por:
 
 @login_required
 @permission_required('ventas.add_venta', raise_exception=True)
@@ -33,13 +128,13 @@ def crear_venta(request):
     GET  → muestra los dos formularios vacíos.
     POST → valida ambos, guarda si correctos, muestra errores si no.
     """
-    venta_form   = VentaForm(request.POST or None)
+    venta_form = VentaForm(request.POST or None)
     detalle_form = DetalleVentaForm(request.POST or None)
 
     if request.method == 'POST':
         if venta_form.is_valid() and detalle_form.is_valid():
-            venta         = venta_form.save()
-            detalle       = detalle_form.save(commit=False)
+            venta = venta_form.save()
+            detalle = detalle_form.save(commit=False)
             detalle.venta = venta
             detalle.save()
             messages.success(
@@ -50,10 +145,9 @@ def crear_venta(request):
             return redirect('ventas:detalle', venta_id=venta.pk)
 
     return render(request, 'ventas/crear.html', {
-        'venta_form':   venta_form,
+        'venta_form': venta_form,
         'detalle_form': detalle_form,
     })
-    
 
 
 class VentaListView(ListView):
@@ -66,7 +160,8 @@ class VentaListView(ListView):
 
     def get_queryset(self):
         return Venta.objects.select_related('cliente').order_by('-fecha')
-    
+
+
 class VentaInicioView(VentaListView):
     """Página inicial: igual que la lista, pero con index.html."""
 

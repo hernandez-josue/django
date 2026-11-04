@@ -109,3 +109,4 @@ if _bucket:
     AWS_S3_FILE_OVERWRITE = False       # no sobreescribir si el nombre ya existe
     AWS_QUERYSTRING_AUTH  = False       # URLs públicas (sin firma)
     MEDIA_URL             = f'https://{_bucket}.s3.amazonaws.com/'
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang='es'>
+<head>
+<meta charset='utf-8'>
+<title>Factura {{ venta.pk|stringformat:'05d' }}</title>
+<style>
+@page {
+    size: a4 portrait;
+    margin: 3cm 1.8cm 2.5cm 1.8cm;
+    @frame header_frame {
+        -pdf-frame-content: header_content;
+        left: 1.8cm; width: 17.4cm; top: 0.8cm; height: 2cm;
+    }
+    @frame footer_frame {
+        -pdf-frame-content: footer_content;
+        left: 1.8cm; width: 17.4cm; top: 27.6cm; height: 1cm;
+    }
+}
+body { font-family: Helvetica; font-size: 9.5pt; color: #1A1A1A; }
+.hdr td { border-bottom: 2px solid #B8860B; padding: 4px; }
+.empresa { font-size: 12pt; font-weight: bold; color: #0A2342; }
+.chico { font-size: 8pt; color: #5A6A7E; }
+.banda td { background-color: #0A2342; color: #FFFFFF; padding: 10px; }
+.titulo { font-size: 20pt; font-weight: bold; color: #B8860B; }
+.datos td { border: 1px solid #E8F0FB; padding: 5px; }
+.lbl { background-color: #E8F0FB; font-weight: bold; color: #0A2342; }
+.prod th { background-color: #0A2342; color: #FFFFFF; padding: 6px; font-size: 9pt; }
+.prod td { border-bottom: 1px solid #E8F0FB; padding: 6px; }
+.tot td { padding: 5px; }
+.tot .lbl { border: 1px solid #E8F0FB; }
+.tot .val { border: 1px solid #E8F0FB; }
+.final td { background-color: #FDF8E8; font-weight: bold; font-size: 11pt; border-top: 2px solid #B8860B; }
+.nota td { background-color: #F5F9FF; border-left: 4px solid #4A90D9; padding: 8px; font-size: 8pt; color: #5A6A7E; }
+</style>
+</head>
+<body>
+
+<!-- Encabezado: se repite en TODAS las paginas -->
+<div id='header_content'>
+  <table class='hdr' width='100%'>
+    <tr>
+      <td width='14%'>{% if logo_url %}<img src='{{ logo_url }}' height='36'>{% endif %}</td>
+      <td>
+        <span class='empresa'>{{ config.nombre_empresa }}</span>
+        {% if config.rfc %}<br><span class='chico'>RFC: {{ config.rfc }}</span>{% endif %}
+      </td>
+      <td align='right' class='chico'>
+        Factura # {{ venta.pk|stringformat:'05d' }}<br>{{ venta.fecha|date:'d/m/Y' }}
+      </td>
+    </tr>
+  </table>
+</div>
+
+<!-- Pie: se repite en TODAS las paginas -->
+<div id='footer_content'>
+  <table width='100%'>
+    <tr>
+      <td class='chico'>{{ config.nombre_empresa }}</td>
+      <td align='right' class='chico'>Página <pdf:pagenumber> de <pdf:pagecount></td>
+    </tr>
+  </table>
+</div>
+
+<!-- Banda de titulo -->
+<table class='banda' width='100%'>
+  <tr>
+    <td><span class='titulo'>FACTURA</span></td>
+    <td align='right'># {{ venta.pk|stringformat:'05d' }}<br>{{ venta.fecha|date:'d/m/Y' }}</td>
+  </tr>
+</table>
+<br>
+
+<!-- Datos del cliente -->
+<table class='datos' width='100%'>
+  <tr>
+    <td class='lbl' width='18%'>Cliente</td><td width='32%'>{{ venta.cliente.nombre }}</td>
+    <td class='lbl' width='18%'>Correo</td><td width='32%'>{{ venta.cliente.correo }}</td>
+  </tr>
+  <tr>
+    <td class='lbl'>Teléfono</td><td>{{ venta.cliente.telefono|default:'-' }}</td>
+    <td class='lbl'>Moneda</td><td>{{ config.moneda }}</td>
+  </tr>
+  <tr>
+    <td class='lbl'>Fecha de emisión</td><td>{{ venta.fecha|date:'d/m/Y' }}</td>
+    <td class='lbl'>IVA</td><td>{{ config.iva_porcentaje }}%</td>
+  </tr>
+</table>
+<br>
+
+<!-- Productos: repeat='1' repite la fila de cabecera en cada pagina -->
+<table class='prod' width='100%' repeat='1'>
+  <tr>
+    <th width='6%' align='left'>#</th>
+    <th width='42%' align='left'>Producto</th>
+    <th width='18%' align='right'>Precio unit.</th>
+    <th width='12%' align='right'>Cant.</th>
+    <th width='22%' align='right'>Subtotal</th>
+  </tr>
+  {% for detalle in venta.detalles.all %}
+  <tr>
+    <td>{{ forloop.counter }}</td>
+    <td>{{ detalle.producto.nombre }}</td>
+    <td align='right'>${{ detalle.precio_unitario }}</td>
+    <td align='right'>{{ detalle.cantidad }}</td>
+    <td align='right'>${{ detalle.subtotal }}</td>
+  </tr>
+  {% empty %}
+  <tr>
+    <td colspan='5' align='center'>Sin líneas de detalle registradas.</td>
+  </tr>
+  {% endfor %}
+</table>
+<br>
+
+<!-- Totales (la primera columna es solo espacio para alinear a la derecha) -->
+<table class='tot' width='100%'>
+  <tr>
+    <td width='55%'></td>
+    <td class='lbl' width='25%'>Subtotal (sin IVA)</td>
+    <td class='val' width='20%' align='right'>${{ subtotal }}</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td class='lbl'>IVA ({{ config.iva_porcentaje }}%)</td>
+    <td class='val' align='right'>${{ iva }}</td>
+  </tr>
+  <tr class='final'>
+    <td></td>
+    <td>TOTAL</td>
+    <td align='right'>${{ total_con_iva }}</td>
+  </tr>
+</table>
+<br>
+
+<!-- Nota -->
+<table class='nota' width='100%'>
+  <tr>
+    <td>
+      <b>Nota:</b> Este documento es una representación de la factura generada por
+      el sistema ERP Django de {{ config.nombre_empresa }}.
+      {% if config.rfc %}RFC: {{ config.rfc }}.{% endif %}
+      Generado el {{ hoy|date:'d/m/Y' }}.
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>

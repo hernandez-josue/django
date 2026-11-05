@@ -7,6 +7,8 @@
     <meta name="theme-color" content="#8B0000">
     <title>{% block title %}Inicio{% endblock %} · Chinos S.A. de C.V.</title>
 
+    
+
     <!-- Aplica tema y tipo de letra guardados ANTES de pintar (evita parpadeo) -->
     <script>
     (function () {
@@ -542,6 +544,21 @@
         <button class="theme-toggle" id="themeBtn" title="Modo claro/oscuro">🌙</button>
     </div>
 </nav>
+
+<!-- En templates/base.html — dentro de erp-nav-links,
+     agregar ANTES del enlace "Admin": -->
+<a href="{% url 'catalogo:catalogo' %}"
+   class="erp-nav-link {% block nav_catalogo %}{% endblock %}">
+    🛒 Tienda
+</a>
+<!-- Contador del carrito en la navbar -->
+{% if carrito_total_items > 0 %}
+<a href="{% url 'catalogo:carrito' %}"
+   class="erp-nav-link"
+   style="position:relative;">
+    🛍️ ({{ carrito_total_items }})
+</a>
+{% endif %}
 
 <!-- MENSAJES FLASH -->
 {% if messages %}

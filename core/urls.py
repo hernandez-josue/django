@@ -31,9 +31,9 @@ urlpatterns = [
     path('proveedores/', include('proveedores.urls', namespace='proveedores')),
     path('productos/',   include('productos.urls',   namespace='productos')),
     path('ventas/',      include('ventas.urls',       namespace='ventas')),
+    path('catalogo/', include('catalogo.urls', namespace='catalogo')),
     path('reportes/',    include('reportes.urls',     namespace='reportes')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
 
 # Archivos estáticos: habilitar para pruebas locales con DEBUG=False.
 if settings.DEBUG is False:

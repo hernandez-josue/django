@@ -1,4 +1,4 @@
-﻿# core/settings.py  (guardar como UTF-8)
+# core/settings.py  (guardar como UTF-8)
 import environ
 from pathlib import Path
 
@@ -25,7 +25,7 @@ ALLOWED_HOSTS = [
 # Necesario para login/formularios por HTTPS en Render
 CSRF_TRUSTED_ORIGINS = ['https://django-w4le.onrender.com']
 
-# ── Apps ──────────────────────────────────────────────────────────────────
+# core/settings.py — actualizar INSTALLED_APPS:
 INSTALLED_APPS = [
     'jazzmin',
     'django.contrib.admin',
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'rest_framework',
     'rest_framework.authtoken',
+    'django_filters',              # ← nuevo (nombre de app es django_filters)
     'whitenoise.runserver_nostatic',
     # Apps del ERP
     'core',
@@ -50,6 +51,7 @@ INSTALLED_APPS = [
     'ventas',
     'reportes',
     'configuracion',
+    'catalogo',                    # ← nuevo
 ]
 
 MIDDLEWARE = [
@@ -66,7 +68,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'core.urls'
 
-# ── Templates ─────────────────────────────────────────────────────────────
+# core/settings.py — actualizar TEMPLATES[0]['OPTIONS']['context_processors']:
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -78,6 +80,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # Context processor del carrito — W13
+                'catalogo.context_processors.carrito_info',
             ],
         },
     },

@@ -7,7 +7,7 @@ Ejecutar con:
     python manage.py test tests.test_w14_checkout --verbosity=2
 
 Resultado esperado:
-    Ran 8 tests in X.XXXs
+    Ran 10 tests in X.XXXs
     OK
 """
 from decimal import Decimal

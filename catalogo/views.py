@@ -1,10 +1,15 @@
 # catalogo/views.py — agregar imports al inicio:
 import stripe
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
+from django.shortcuts import get_object_or_404, redirect, render
+# (si ya importaste messages/redirect/render en W13, no los dupliques)
 
 from ventas.models import DetalleVenta, Pedido
 from .checkout_utils import (
+    armar_items,
     calcular_totales,
     generar_numero_pedido,
     obtener_o_crear_cliente,
@@ -12,6 +17,14 @@ from .checkout_utils import (
 
 # Configurar la clave secreta de Stripe
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
+
+
+
+# catalogo/views.py — agregar imports al inicio:
+import stripe
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
 
 from django.shortcuts import render
 
@@ -227,6 +240,7 @@ def checkout(request):
         return redirect('catalogo:catalogo')
 
     totales         = calcular_totales(carrito)
+    items           = armar_items(carrito)   # subtotal por línea
     publishable_key = settings.STRIPE_PUBLISHABLE_KEY
 
     if request.method == 'POST':
@@ -234,43 +248,45 @@ def checkout(request):
             # ── 1. Vincular usuario con Cliente del ERP ────────────────
             cliente = obtener_o_crear_cliente(request.user)
 
-            # ── 2. Crear el Pedido en estado "pendiente" ───────────────
-            numero = generar_numero_pedido()
-            pedido = Pedido.objects.create(
-                numero_pedido = numero,
-                cliente       = cliente,
-                estado        = 'pendiente',
-                total_pagado  = totales['total'],
-            )
-
-            # ── 3. Crear PaymentIntent en Stripe ───────────────────────
             # Monto en centavos (Stripe requiere entero)
             monto_centavos = int(totales['total'] * 100)
 
-            intent = stripe.PaymentIntent.create(
-                amount          = monto_centavos,
-                currency        = 'mxn',
-                metadata        = {
-                    'pedido_id':  pedido.pk,
-                    'pedido_num': pedido.numero_pedido,
-                    'cliente':    cliente.nombre,
-                },
-                idempotency_key = f'pedido-{pedido.pk}',
-            )
+            # ── 2 y 3. Pedido + PaymentIntent en una transacción ───────
+            # Si Stripe falla, el Pedido se revierte (no quedan huérfanos).
+            with transaction.atomic():
+                pedido = Pedido.objects.create(
+                    numero_pedido = generar_numero_pedido(),
+                    cliente       = cliente,
+                    estado        = 'pendiente',
+                    total_pagado  = totales['total'],
+                )
+                intent = stripe.PaymentIntent.create(
+                    amount          = monto_centavos,
+                    currency        = 'mxn',
+                    metadata        = {
+                        'pedido_id':  pedido.pk,
+                        'pedido_num': pedido.numero_pedido,
+                        'cliente':    cliente.nombre,
+                    },
+                    idempotency_key = f'pedido-{pedido.pk}',
+                )
 
             # ── 4. Retornar client_secret al template ──────────────────
             return render(request, 'catalogo/checkout.html', {
                 'carrito':         carrito,
+                'items':           items,
                 'totales':         totales,
                 'pedido':          pedido,
                 'client_secret':   intent.client_secret,
                 'publishable_key': publishable_key,
             })
 
-        except stripe.error.StripeError as exc:
+        except stripe.StripeError as exc:
+            # stripe.error.* está obsoleto en versiones recientes del SDK;
+            # user_message puede ser None, por eso el respaldo con str(exc).
             messages.error(
                 request,
-                f'Error al conectar con Stripe: {exc.user_message}'
+                f'Error al conectar con Stripe: {exc.user_message or exc}'
             )
             return redirect('catalogo:pago_error')
 
@@ -284,6 +300,7 @@ def checkout(request):
     # GET — solo mostrar resumen (sin PaymentIntent)
     return render(request, 'catalogo/checkout.html', {
         'carrito':         carrito,
+        'items':           items,
         'totales':         totales,
         'client_secret':   None,          # se genera en POST
         'publishable_key': publishable_key,
@@ -296,7 +313,6 @@ def pago_exitoso(request, pedido_id: int):
     Vacía el carrito de la sesión y muestra el número de pedido.
     Stripe redirige aquí después de `stripe.confirmCardPayment` exitoso.
     """
-    from django.shortcuts import get_object_or_404
     pedido = get_object_or_404(Pedido, pk=pedido_id)
 
     # Vaciar el carrito al confirmar el pago

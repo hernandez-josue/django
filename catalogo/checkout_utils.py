@@ -43,6 +43,28 @@ def calcular_totales(carrito: dict) -> dict:
     }
 
 
+def armar_items(carrito: dict) -> list:
+    """Convierte el carrito de sesión en una lista con el subtotal por línea.
+
+    Los templates de Django no pueden multiplicar (precio × cantidad),
+    por eso el cálculo se hace aquí.
+
+    Returns:
+        list de dicts con nombre, precio, cantidad y subtotal (Decimal).
+    """
+    items = []
+    for datos in carrito.values():
+        precio   = Decimal(datos['precio'])
+        cantidad = int(datos['cantidad'])
+        items.append({
+            'nombre':   datos['nombre'],
+            'precio':   precio,
+            'cantidad': cantidad,
+            'subtotal': precio * cantidad,
+        })
+    return items
+
+
 def obtener_o_crear_cliente(user) -> Cliente:
     """Obtiene o crea un Cliente del ERP vinculado al usuario Django.
 
@@ -77,8 +99,14 @@ def generar_numero_pedido() -> str:
     Returns:
         str: por ejemplo 'PED-2025-0001'
     """
-    anio      = date.today().year
-    siguiente = Pedido.objects.filter(
-        numero_pedido__startswith=f'PED-{anio}-'
-    ).count() + 1
-    return f'PED-{anio}-{siguiente:04d}'
+    anio    = date.today().year
+    prefijo = f'PED-{anio}-'
+    ultimo  = (
+        Pedido.objects.filter(numero_pedido__startswith=prefijo)
+        .order_by('-numero_pedido')
+        .first()
+    )
+    # Se usa el último número (no count()) para evitar colisiones
+    # si se borró algún pedido.
+    siguiente = int(ultimo.numero_pedido.split('-')[-1]) + 1 if ultimo else 1
+    return f'{prefijo}{siguiente:04d}'

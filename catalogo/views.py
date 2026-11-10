@@ -291,6 +291,7 @@ def checkout(request):
             return redirect('catalogo:pago_error')
 
         except Exception as exc:
+            import traceback; traceback.print_exc()
             messages.error(
                 request,
                 f'Error inesperado en el proceso de pago: {exc}'

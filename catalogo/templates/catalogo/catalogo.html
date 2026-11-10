@@ -1,216 +1,105 @@
 {% extends "base.html" %}
-{% block title %}Checkout · Proceso de pago{% endblock %}
+{% block title %}Cat&aacute;logo{% endblock %}
+{% block nav_catalogo %}active{% endblock %}
 
 {% block extra_css %}
 <style>
-    /* Estilos para el Card Element de Stripe */
-    #card-element {
-        background: var(--clr-surface);
-        border: 1.5px solid var(--clr-border);
-        border-radius: 8px;
-        padding: .75rem 1rem;
-        transition: border-color .2s;
+    .cat-filtros form { display:flex; flex-wrap:wrap; gap:1rem; align-items:flex-end; }
+    .cat-filtros .cat-campo { min-width:160px; flex:1 1 160px; }
+    .cat-filtros input:not([type=checkbox]), .cat-filtros select {
+        background:var(--clr-surface); border:1.5px solid var(--clr-border);
+        border-radius:8px; color:var(--clr-text); padding:.45rem .8rem; width:100%;
     }
-    #card-element.StripeElement--focus {
-        border-color: var(--clr-sky);
-        box-shadow: 0 0 0 3px rgba(74,144,217,.18);
+    .cat-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:1.25rem; }
+    .cat-card { display:flex; flex-direction:column; padding:0; margin-bottom:0; }
+    .cat-img {
+        height:170px; background:var(--clr-cream); display:flex; align-items:center;
+        justify-content:center; font-size:3rem; border-radius:12px 12px 0 0; overflow:hidden;
     }
-    #card-element.StripeElement--invalid {
-        border-color: var(--clr-danger);
-    }
-    #card-errors {
-        color: var(--clr-danger);
-        font-size: .85rem;
-        margin-top: .4rem;
-        min-height: 1.2rem;
-    }
-    #submit-btn:disabled {
-        opacity: .7;
-        cursor: not-allowed;
-    }
+    .cat-img img { width:100%; height:100%; object-fit:cover; }
+    .cat-body { padding:1rem 1.1rem 1.1rem; display:flex; flex-direction:column; gap:.4rem; flex:1; }
+    .cat-precio { font-weight:700; font-size:1.2rem; color:var(--clr-gold); }
+    .cat-agregar { margin-top:auto; display:flex; gap:.5rem; }
+    .cat-agregar input[type=number] { width:75px; }
+    .cat-pag { display:flex; justify-content:center; align-items:center; gap:.75rem; flex-wrap:wrap; margin-top:1.5rem; }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="erp-page-title">
-    <h2>💳 Proceso de pago</h2>
-    <a href="{% url 'catalogo:carrito' %}"
-       class="btn-erp-primary ms-auto">← Volver al carrito</a>
+    <h2>&#128722; Tienda</h2>
+    <a href="{% url 'catalogo:carrito' %}" class="btn-erp-primary ms-auto">
+        Ver carrito{% if carrito_total_items %} ({{ carrito_total_items }}){% endif %}
+    </a>
 </div>
 
-<div class="row g-4">
-
-    <!-- Resumen del pedido -->
-    <div class="col-md-5">
-        <div class="erp-card">
-            <div class="erp-card-header">🛍️ Resumen de tu pedido</div>
-            <table style="width:100%;border-collapse:collapse;margin-top:.5rem;">
-                {% for item in items %}
-                <tr>
-                    <td style="padding:.4rem 0;font-size:.9rem;">
-                        {{ item.nombre }}
-                        <span style="color:var(--clr-muted);
-                                     font-size:.82rem;">
-                            × {{ item.cantidad }}
-                        </span>
-                    </td>
-                    <td style="text-align:right;font-weight:600;
-                               font-size:.9rem;padding:.4rem 0;">
-                        ${{ item.subtotal }}
-                    </td>
-                </tr>
-                {% endfor %}
-                <tr style="border-top:1px solid var(--clr-border);">
-                    <td style="padding:.5rem 0;color:var(--clr-muted);
-                               font-size:.88rem;">
-                        Subtotal
-                    </td>
-                    <td style="text-align:right;color:var(--clr-muted);
-                               font-size:.88rem;">
-                        ${{ totales.subtotal }}
-                    </td>
-                </tr>
-                <tr>
-                    <td style="padding:.3rem 0;color:var(--clr-muted);
-                               font-size:.88rem;">
-                        IVA ({{ totales.iva_pct }}%)
-                    </td>
-                    <td style="text-align:right;color:var(--clr-muted);
-                               font-size:.88rem;">
-                        ${{ totales.iva_monto }}
-                    </td>
-                </tr>
-                <tr style="border-top:2px solid var(--clr-gold);">
-                    <td style="padding:.6rem 0;font-weight:700;font-size:1rem;">
-                        TOTAL
-                    </td>
-                    <td style="text-align:right;font-weight:700;
-                               font-size:1.2rem;color:var(--clr-gold);">
-                        ${{ totales.total }}
-                    </td>
-                </tr>
-            </table>
+<div class="erp-card cat-filtros">
+    <form method="get">
+        {% for campo in filtro.form %}
+        <div class="cat-campo">
+            <label class="erp-label" for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+            {{ campo }}
         </div>
-
-        {% if pedido %}
-        <div class="erp-alert-info" style="margin-top:1rem;">
-            <strong>Pedido creado:</strong> {{ pedido.numero_pedido }}<br>
-            <small style="color:var(--clr-muted);">
-                Completa el pago para confirmar tu pedido.
-            </small>
+        {% endfor %}
+        <div>
+            <button type="submit" class="btn-erp-primary">Filtrar</button>
+            <a href="{% url 'catalogo:catalogo' %}" class="btn-erp-gold">Limpiar</a>
         </div>
-        {% endif %}
-    </div>
+    </form>
+</div>
 
-    <!-- Formulario de pago -->
-    <div class="col-md-7">
-        <div class="erp-card">
-            <div class="erp-card-header">🔒 Datos de pago</div>
-
-            {% if client_secret %}
-            <!-- Formulario de tarjeta con Stripe.js -->
-            <p style="color:var(--clr-muted);font-size:.85rem;margin-bottom:1rem;">
-                Tus datos de pago son procesados de forma segura por Stripe.
-                Nunca pasan por nuestros servidores.
-            </p>
-
-            <div class="mb-4">
-                <label class="erp-label">Número de tarjeta</label>
-                <div id="card-element"></div>
-                <div id="card-errors" role="alert"></div>
+{% if productos %}
+<div class="cat-grid">
+    {% for producto in productos %}
+    <div class="erp-card cat-card">
+        <div class="cat-img">
+            {% if producto.imagen %}
+            <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+            {% else %}
+            &#128230;
+            {% endif %}
+        </div>
+        <div class="cat-body">
+            <div class="erp-prod-nombre" style="font-size:1.2rem;">{{ producto.nombre }}</div>
+            {% if producto.categoria %}
+            <span class="badge-erp-gold" style="align-self:flex-start;">{{ producto.categoria.nombre }}</span>
+            {% endif %}
+            <div class="cat-precio">${{ producto.precio }}</div>
+            <div style="color:var(--clr-muted);font-size:.85rem;">
+                {% if producto.stock > 0 %}Disponibles: {{ producto.stock }}{% else %}Agotado{% endif %}
             </div>
 
-            <button id="submit-btn" class="btn-erp-gold"
-                    style="width:100%;padding:.6rem;font-size:1rem;">
-                🔐 Confirmar pago de ${{ totales.total }}
-            </button>
-
-            <p style="text-align:center;margin-top:.75rem;
-                      color:var(--clr-muted);font-size:.78rem;">
-                Tarjeta de prueba: <code>4242 4242 4242 4242</code>
-                · cualquier fecha futura · cualquier CVC
-            </p>
-
-            {% else %}
-            <!-- GET: iniciar proceso con POST -->
-            <p style="margin-bottom:1.5rem;color:var(--clr-muted);">
-                Haz clic en "Proceder al pago" para generar
-                tu pedido e introducir los datos de tu tarjeta.
-            </p>
-            <form method="post">
+            {% if producto.stock > 0 %}
+            <form method="post" action="{% url 'catalogo:agregar' producto.pk %}" class="cat-agregar">
                 {% csrf_token %}
-                <button type="submit" class="btn-erp-gold"
-                        style="width:100%;padding:.6rem;font-size:1rem;">
-                    Proceder al pago →
-                </button>
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <input type="number" name="cantidad" value="1" min="1" max="{{ producto.stock }}" class="erp-input">
+                <button type="submit" class="btn-erp-gold" style="flex:1;">Agregar</button>
             </form>
+            {% else %}
+            <button type="button" class="btn-erp-primary" disabled style="margin-top:auto;opacity:.6;">Agotado</button>
             {% endif %}
         </div>
     </div>
-
+    {% endfor %}
 </div>
-{% endblock %}
 
-{% block extra_js %}
-{% if client_secret %}
-<script src="https://js.stripe.com/v3/"></script>
-<script>
-(function () {
-    'use strict';
+{% if is_paginated %}
+<div class="cat-pag">
+    {% if page_obj.has_previous %}
+    <a class="btn-erp-primary btn-erp-sm" href="?page={{ page_obj.previous_page_number }}">&laquo; Anterior</a>
+    {% endif %}
+    <span class="badge-erp-gold">P&aacute;gina {{ page_obj.number }} de {{ paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+    <a class="btn-erp-primary btn-erp-sm" href="?page={{ page_obj.next_page_number }}">Siguiente &raquo;</a>
+    {% endif %}
+</div>
+{% endif %}
 
-    const stripe     = Stripe('{{ publishable_key }}');
-    const elements   = stripe.elements();
-    const clientSecret = '{{ client_secret }}';
-
-    // Crear el Card Element con estilos Fable 5 AzulERP
-    const card = elements.create('card', {
-        style: {
-            base: {
-                fontFamily: "'Inter', 'Segoe UI', sans-serif",
-                fontSize: '15px',
-                color: getComputedStyle(document.documentElement)
-                            .getPropertyValue('--clr-text').trim() || '#1A1A2E',
-                '::placeholder': { color: '#8AA0B8' },
-            },
-            invalid: { color: '#C0392B', iconColor: '#C0392B' },
-        },
-    });
-    card.mount('#card-element');
-
-    // Mostrar errores en tiempo real (p. ej. número inválido)
-    card.on('change', function (event) {
-        const errorDiv = document.getElementById('card-errors');
-        errorDiv.textContent = event.error ? event.error.message : '';
-    });
-
-    // Manejar el submit del botón de pago
-    const btn = document.getElementById('submit-btn');
-    btn.addEventListener('click', async function () {
-        btn.disabled     = true;
-        btn.textContent  = '⏳ Procesando…';
-
-        const { error, paymentIntent } = await stripe.confirmCardPayment(
-            clientSecret,
-            { payment_method: { card: card } }
-        );
-
-        if (error) {
-            // Mostrar el error y habilitar el botón de nuevo
-            document.getElementById('card-errors').textContent = error.message;
-            btn.disabled    = false;
-            btn.textContent = '🔐 Confirmar pago de ${{ totales.total }}';
-        } else if (paymentIntent.status === 'succeeded') {
-            // Redirigir a la vista de éxito (URL generada por Django)
-            window.location.href = "{% url 'catalogo:pago_exitoso' pedido.pk %}";
-        } else {
-            // processing, requires_payment_method, etc.
-            document.getElementById('card-errors').textContent =
-                'Estado del pago: ' + paymentIntent.status + '. Intenta de nuevo.';
-            btn.disabled    = false;
-            btn.textContent = '🔐 Confirmar pago de ${{ totales.total }}';
-        }
-    });
-})();
-</script>
+{% else %}
+<div class="erp-alert-info">
+    No se encontraron productos con esos filtros.
+    <a href="{% url 'catalogo:catalogo' %}" class="erp-link">Ver todos</a>
+</div>
 {% endif %}
 {% endblock %}

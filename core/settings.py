@@ -274,3 +274,43 @@ LOGGING = {
 STRIPE_SECRET_KEY      = env('STRIPE_SECRET_KEY',      default='sk_test_placeholder')
 STRIPE_PUBLISHABLE_KEY = env('STRIPE_PUBLISHABLE_KEY', default='pk_test_placeholder')
 STRIPE_WEBHOOK_SECRET  = env('STRIPE_WEBHOOK_SECRET',  default='whsec_placeholder')
+
+# core/settings.py — agregar al final (después de JAZZMIN_SETTINGS):
+
+# ── CELERY — Cola de tareas asíncronas ────────────────────────────────────
+# Broker: Redis almacena los mensajes de las tareas pendientes
+CELERY_BROKER_URL = env('REDIS_URL', default='redis://localhost:6379/0')
+
+# Backend: Redis almacena los resultados de las tareas (opcional)
+CELERY_RESULT_BACKEND = env('REDIS_URL', default='redis://localhost:6379/0')
+
+# Formato de serialización (JSON es seguro y portable)
+CELERY_ACCEPT_CONTENT    = ['json']
+CELERY_TASK_SERIALIZER   = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+# Zona horaria (heredar de Django)
+CELERY_TIMEZONE = TIME_ZONE   # 'America/Mexico_City'
+
+# Reintentos automáticos ante fallos de conexión al broker
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+
+# Tiempo máximo que puede correr una tarea antes de ser terminada (segundos)
+CELERY_TASK_SOFT_TIME_LIMIT = 300   # 5 minutos
+CELERY_TASK_TIME_LIMIT       = 360  # 6 minutos (hard limit)
+
+# Prefijo para las colas (útil si se comparte Redis entre proyectos)
+CELERY_TASK_DEFAULT_QUEUE = 'erp_django'
+
+# Para tests: ejecutar tareas sincrónicamente (sin worker)
+# Se activa en tests con @override_settings(CELERY_TASK_ALWAYS_EAGER=True)
+CELERY_TASK_ALWAYS_EAGER         = False
+CELERY_TASK_EAGER_PROPAGATES     = True
+
+import sys
+TESTING = 'test' in sys.argv
+
+if TESTING:
+    CELERY_TASK_ALWAYS_EAGER = True
+    CELERY_TASK_EAGER_PROPAGATES = True
+    CELERY_BROKER_URL = 'memory://'

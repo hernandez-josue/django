@@ -19,6 +19,11 @@ from .settings import *   # hereda toda la configuraciÃ³n base
 import os
 import dj_database_url
 
+# core/settings_prod.py — agregar:
+
+# En producción: usar SendGrid via anymail
+EMAIL_BACKEND = 'anymail.backends.sendgrid.EmailBackend
+
 # â”€â”€ SEGURIDAD BÃSICA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 DEBUG = False
 SECRET_KEY = os.environ['SECRET_KEY']   # falla intencionalmente si no existe

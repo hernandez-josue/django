@@ -22,7 +22,7 @@ import dj_database_url
 # core/settings_prod.py — agregar:
 
 # En producción: usar SendGrid via anymail
-EMAIL_BACKEND = 'anymail.backends.sendgrid.EmailBackend
+EMAIL_BACKEND = 'anymail.backends.sendgrid.EmailBackend'
 
 # â”€â”€ SEGURIDAD BÃSICA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 DEBUG = False

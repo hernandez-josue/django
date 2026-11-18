@@ -21,7 +21,7 @@
     {% for m in modulos %}
     <div class="col-md-4">
         <div class="erp-card text-center"
-             style="cursor:pointer;" onclick="window.location='{{ m.url }}'">
+             style="cursor:pointer;" onclick="Turbo.visit('{{ m.url }}')">
             <div style="font-size:2rem;margin-bottom:.4rem;">{{ m.icono }}</div>
             <strong style="color:var(--clr-navy);">{{ m.nombre }}</strong>
             <p style="color:var(--clr-muted);font-size:.85rem;margin:.3rem 0 0;">
@@ -31,4 +31,6 @@
     </div>
     {% endfor %}
 </div>
+
+
 {% endblock %}

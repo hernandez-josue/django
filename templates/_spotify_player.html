@@ -1,0 +1,340 @@
+<!-- Reproductor Spotify: cajón lateral + pestaña independiente -->
+<div id="spotify-player" data-turbo-permanent>
+
+<style>
+  #spotify-player{
+    --w:min(320px, calc(100vw - 56px));
+    --g:#C9A227; --g2:#E8C547; --r:#8B0000; --rd:#3B0A0A;
+    --top:88px;
+    font-family:'Inter','Segoe UI',sans-serif; font-style:normal;
+  }
+  #spotify-player *{box-sizing:border-box;}
+
+  /* ---------- Pestaña dorada (pieza independiente, tamaño fijo) ---------- */
+  #spotify-player .sp-tab{
+    position:fixed; top:calc(var(--top) + 8px); right:var(--w); z-index:2001;
+    width:46px; min-width:46px; height:158px; min-height:158px; flex:none; padding:12px 0;
+    display:flex; flex-direction:column; align-items:center; justify-content:space-between;
+    border:1px solid rgba(255,255,255,.55); border-right:0; border-radius:16px 0 0 16px;
+    cursor:pointer; color:var(--rd); font-family:inherit;
+    background:linear-gradient(160deg, #F3D56B, #C9A227 55%, #A8861B);
+    box-shadow:-6px 8px 22px rgba(0,0,0,.4), 0 0 0 3px rgba(201,162,39,.25);
+    overflow:hidden; animation:spGlow 2.8s ease-in-out infinite;
+    transition:right .55s cubic-bezier(.2,.9,.25,1), filter .2s, width .2s;
+  }
+  #spotify-player.closed .sp-tab{right:0;}
+  #spotify-player .sp-tab:hover{filter:brightness(1.08); width:50px;}
+  #spotify-player .sp-tab::after{
+    content:""; position:absolute; left:0; top:-60%; width:100%; height:40%;
+    background:linear-gradient(180deg, transparent, rgba(255,255,255,.65), transparent);
+    animation:spShineV 3.8s ease-in-out infinite; pointer-events:none;
+  }
+  #spotify-player .sp-chev{font-size:1.05rem; font-weight:800; line-height:1; transition:transform .45s cubic-bezier(.2,.9,.3,1.3);}
+  #spotify-player.closed .sp-chev{transform:rotate(180deg);}
+  #spotify-player .sp-disc{
+    width:28px; height:28px; border-radius:50%; flex:none;
+    border:2px solid var(--rd);
+    background:
+      radial-gradient(circle at center, #E8C547 0 3px, var(--rd) 4px 6px, transparent 7px),
+      repeating-radial-gradient(circle at center, #1b0808 0 2px, #3a1212 2px 4px);
+    box-shadow:0 2px 6px rgba(0,0,0,.45);
+  }
+  #spotify-player.is-playing .sp-disc{animation:spSpin 3s linear infinite;}
+  #spotify-player .sp-tabtxt{
+    writing-mode:vertical-rl; transform:rotate(180deg);
+    font-size:.72rem; font-weight:800; letter-spacing:.3em; text-transform:uppercase; white-space:nowrap;
+  }
+
+  /* ---------- Panel (se desliza fuera de la pantalla) ---------- */
+  #spotify-player .sp-card{
+    position:fixed; top:var(--top); right:0; z-index:2000;
+    width:var(--w); max-height:calc(100vh - var(--top) - 12px); overflow-y:auto; overflow-x:hidden;
+    scrollbar-width:thin; scrollbar-color:var(--g) transparent;
+    background:linear-gradient(160deg, rgba(139,0,0,.95), rgba(59,10,10,.98));
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    border:1px solid rgba(201,162,39,.7); border-right:0;
+    border-radius:18px 0 0 18px;
+    box-shadow:-10px 14px 34px rgba(0,0,0,.45), 0 0 0 3px rgba(201,162,39,.12);
+    transform:translateX(0); visibility:visible;
+  }
+  #spotify-player.ready .sp-card{transition:transform .55s cubic-bezier(.2,.9,.25,1), visibility 0s;}
+  #spotify-player.closed .sp-card{
+    transform:translateX(calc(100% + 40px)); visibility:hidden; pointer-events:none;
+  }
+  #spotify-player.ready.closed .sp-card{transition:transform .55s cubic-bezier(.2,.9,.25,1), visibility 0s .55s;}
+
+  /* Cabecera */
+  #spotify-player .sp-head{display:flex; align-items:center; gap:8px; padding:10px 10px 8px 12px; color:#fff;}
+  #spotify-player .sp-seal{
+    width:30px; height:30px; flex:none; border-radius:50%;
+    border:1.5px solid var(--g); color:var(--g);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Playfair Display',serif; font-size:.95rem; background:rgba(0,0,0,.2);
+  }
+  #spotify-player .sp-info{flex:1; min-width:0; line-height:1.15;}
+  #spotify-player .sp-label{font-size:.6rem; letter-spacing:.16em; text-transform:uppercase; color:var(--g); font-weight:600;}
+  #spotify-player .sp-now{font-size:.82rem; font-weight:500; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  #spotify-player .sp-btn{
+    border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.09); color:#fff;
+    width:27px; height:27px; flex:none; border-radius:50%; cursor:pointer;
+    font-size:.78rem; line-height:1; padding:0;
+    transition:background .2s, color .2s, transform .15s, border-color .2s;
+  }
+  #spotify-player .sp-btn:hover{background:var(--g); color:var(--rd); border-color:var(--g); transform:scale(1.08);}
+
+  #spotify-player .sp-listbtn{
+    flex:none; display:flex; align-items:center; gap:5px; height:27px; padding:0 10px;
+    border-radius:20px; cursor:pointer; font-size:.72rem; font-weight:700; letter-spacing:.04em; color:var(--rd);
+    background:linear-gradient(135deg, var(--g2), var(--g)); border:1px solid rgba(255,255,255,.4);
+    box-shadow:0 2px 8px rgba(201,162,39,.35); position:relative; overflow:hidden;
+    transition:transform .2s, box-shadow .2s, filter .2s;
+  }
+  #spotify-player .sp-listbtn:hover{transform:translateY(-1px); box-shadow:0 5px 14px rgba(201,162,39,.55); filter:brightness(1.07);}
+  #spotify-player .sp-listbtn::after{
+    content:""; position:absolute; top:0; left:-60%; width:40%; height:100%;
+    background:linear-gradient(100deg, transparent, rgba(255,255,255,.7), transparent);
+    transform:skewX(-20deg); animation:spShine 3.6s ease-in-out infinite;
+  }
+  #spotify-player .sp-listbtn .arr{display:inline-block; transition:transform .35s cubic-bezier(.2,.9,.3,1.3); font-size:.65rem;}
+  #spotify-player .sp-listbtn.on .arr{transform:rotate(180deg);}
+  #spotify-player .sp-listbtn.on{box-shadow:0 0 0 3px rgba(232,197,71,.3), 0 4px 12px rgba(201,162,39,.5);}
+
+  /* Embed y controles */
+  #spotify-player .sp-embed{padding:0 10px;}
+  #spotify-player .sp-embed iframe{display:block; border-radius:12px; border:0; box-shadow:0 3px 10px rgba(0,0,0,.3);}
+  #spotify-player .sp-controls{display:flex; justify-content:center; align-items:center; gap:14px; padding:9px 0 10px;}
+  #spotify-player .sp-controls .sp-btn{width:32px; height:32px; font-size:.9rem;}
+  #spotify-player .sp-count{font-size:.72rem; color:var(--g); min-width:42px; text-align:center; font-weight:600; letter-spacing:.05em;}
+
+  /* Lista */
+  #spotify-player .sp-listwrap{
+    max-height:0; overflow:hidden; opacity:0;
+    background:linear-gradient(180deg, rgba(0,0,0,.34), rgba(0,0,0,.22));
+    transition:max-height .5s cubic-bezier(.2,.9,.3,1), opacity .35s ease;
+  }
+  #spotify-player .sp-listwrap.open{max-height:320px; opacity:1; border-top:1px solid rgba(201,162,39,.45);}
+  #spotify-player .sp-listhead{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:9px 14px 6px; color:var(--g); font-size:.64rem; letter-spacing:.18em; text-transform:uppercase; font-weight:600;
+  }
+  #spotify-player .sp-listhead i{font-style:normal; color:#f1e6e6; letter-spacing:.04em; text-transform:none; font-weight:500; opacity:.75; font-size:.7rem;}
+  #spotify-player .sp-list{
+    list-style:none; margin:0; padding:0 8px 10px; max-height:236px; overflow-y:auto;
+    scrollbar-width:thin; scrollbar-color:var(--g) transparent;
+  }
+  #spotify-player .sp-list::-webkit-scrollbar{width:5px;}
+  #spotify-player .sp-list::-webkit-scrollbar-thumb{background:var(--g); border-radius:10px;}
+  #spotify-player .sp-list li{
+    display:flex; align-items:center; gap:10px; padding:6px 8px; margin-bottom:4px;
+    border-radius:12px; cursor:pointer; color:#f6ecec; border:1px solid transparent;
+    background:rgba(255,255,255,.04);
+    transition:background .2s, transform .2s, border-color .2s, box-shadow .2s;
+  }
+  #spotify-player .sp-list li:hover{background:rgba(201,162,39,.16); border-color:rgba(201,162,39,.5); transform:translateX(4px); box-shadow:0 4px 14px rgba(0,0,0,.25);}
+  #spotify-player .sp-list li.active{background:linear-gradient(90deg, rgba(201,162,39,.30), rgba(201,162,39,.08)); border-color:var(--g); box-shadow:0 0 14px rgba(201,162,39,.25);}
+  #spotify-player .sp-listwrap.anim .sp-list li{animation:spItem .5s cubic-bezier(.2,.9,.3,1.2) both; animation-delay:calc(var(--i) * 55ms + 120ms);}
+  #spotify-player .sp-cover{
+    width:42px; height:42px; flex:none; border-radius:9px; position:relative;
+    background:linear-gradient(135deg,#5a0a0a,#2a0808) center/cover no-repeat;
+    border:1px solid rgba(201,162,39,.5); display:flex; align-items:center; justify-content:center;
+    color:var(--g); font-size:1rem; overflow:hidden; box-shadow:0 3px 8px rgba(0,0,0,.4);
+  }
+  #spotify-player .sp-cover .num{position:absolute; left:3px; top:2px; font-size:.58rem; font-weight:700; color:#fff; background:rgba(0,0,0,.65); border-radius:6px; padding:0 4px;}
+  #spotify-player .sp-meta{flex:1; min-width:0; line-height:1.25;}
+  #spotify-player .sp-name{font-size:.8rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  #spotify-player .sp-list li.active .sp-name{color:var(--g2);}
+  #spotify-player .sp-sub{font-size:.66rem; color:rgba(255,255,255,.55); letter-spacing:.03em;}
+  #spotify-player .sp-eq{display:none; align-items:flex-end; gap:2px; height:16px; width:18px; flex:none;}
+  #spotify-player .sp-list li.active .sp-eq{display:flex;}
+  #spotify-player .sp-eq b{flex:1; background:var(--g2); border-radius:2px; height:30%;}
+  #spotify-player.is-playing .sp-eq b{animation:spEq .9s ease-in-out infinite;}
+  #spotify-player .sp-eq b:nth-child(2){animation-delay:.18s !important;}
+  #spotify-player .sp-eq b:nth-child(3){animation-delay:.36s !important;}
+  #spotify-player .sp-eq b:nth-child(4){animation-delay:.09s !important;}
+
+  @keyframes spSpin{to{transform:rotate(360deg);}}
+  @keyframes spItem{from{opacity:0; transform:translateY(14px) scale(.96);} to{opacity:1; transform:none;}}
+  @keyframes spEq{0%,100%{height:25%;} 50%{height:100%;}}
+  @keyframes spShine{0%,55%{left:-60%;} 85%,100%{left:130%;}}
+  @keyframes spShineV{0%,50%{top:-60%;} 85%,100%{top:130%;}}
+  @keyframes spGlow{0%,100%{box-shadow:-6px 8px 22px rgba(0,0,0,.4), 0 0 0 3px rgba(201,162,39,.25);} 50%{box-shadow:-6px 8px 22px rgba(0,0,0,.4), 0 0 0 6px rgba(232,197,71,.42), 0 0 22px rgba(232,197,71,.55);}}
+
+  @media (prefers-reduced-motion:reduce){
+    #spotify-player *{animation:none !important; transition:none !important;}
+  }
+</style>
+
+<!-- Pestaña independiente -->
+<button class="sp-tab" id="sp-tab" type="button" data-act="toggle" title="Mostrar / ocultar música (tecla M)" aria-expanded="true">
+  <span class="sp-chev">»</span>
+  <span class="sp-disc"></span>
+  <span class="sp-tabtxt">Música</span>
+</button>
+
+<!-- Panel -->
+<div class="sp-card" id="sp-card">
+  <div class="sp-head">
+    <div class="sp-seal">龍</div>
+    <div class="sp-info">
+      <div class="sp-label">Ahora suena</div>
+      <div class="sp-now" id="sp-now">Mi playlist</div>
+    </div>
+    <button class="sp-listbtn" id="sp-list-btn" type="button" data-act="list" title="Ver canciones (tecla L)">♫ Lista <span class="arr">▾</span></button>
+    <button class="sp-btn" id="sp-min-btn" type="button" data-act="hide" title="Ocultar (tecla M)">»</button>
+  </div>
+
+  <div class="sp-embed"><div id="sp-embed"></div></div>
+
+  <div class="sp-controls">
+    <button class="sp-btn" type="button" data-act="prev" title="Anterior">⏮</button>
+    <span class="sp-count" id="sp-count">1 / 8</span>
+    <button class="sp-btn" type="button" data-act="next" title="Siguiente">⏭</button>
+  </div>
+
+  <div class="sp-listwrap" id="sp-listwrap">
+    <div class="sp-listhead">Playlist <i id="sp-total">8 canciones</i></div>
+    <ul class="sp-list" id="sp-list"></ul>
+  </div>
+</div>
+
+<script>
+(function () {
+  if (window.__spPlayerInit) return;       // evita doble carga con Turbo
+  window.__spPlayerInit = true;
+
+  const TRACKS = [
+    { id: '6RcAHyC5sAUIbPTkhOQwd8' },
+    { id: '0uQhDYHyoZe5DpncrPolb6' },
+    { id: '4e76Ss3ji7HQZ4qwcPNkNA' },
+    { id: '0rSlb6Ng6JobokQUPngjRE' },
+    { id: '4wgmFVOhq23V49NoEavJmj' },
+    { id: '68x2TVlhCCwwBmszzLeCcQ' },
+    { id: '3tDG0JVZo0Y0KwRVZgYIa7' },
+    { id: '1OGH9iojfuPYkn9cfF2pwc' }
+  ];
+
+  let idx = 0, controller = null, near = false, animTimer = null;
+  const $ = id => document.getElementById(id);
+  const root = $('spotify-player');
+  const KEY = 'erpMusicHidden';
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  /* ---------- Mostrar / ocultar ---------- */
+  function isHidden() { return root.classList.contains('closed'); }
+  function setHidden(h) {
+    root.classList.toggle('closed', h);
+    $('sp-tab').setAttribute('aria-expanded', h ? 'false' : 'true');
+    try { localStorage.setItem(KEY, h ? '1' : '0'); } catch (e) {}
+  }
+  try { if (localStorage.getItem(KEY) === '1') root.classList.add('closed'); } catch (e) {}
+  requestAnimationFrame(() => requestAnimationFrame(() => root.classList.add('ready')));
+
+  /* ---------- Lista ---------- */
+  function toggleList(force) {
+    const wrap = $('sp-listwrap');
+    const open = typeof force === 'boolean' ? force : !wrap.classList.contains('open');
+    wrap.classList.toggle('open', open);
+    $('sp-list-btn').classList.toggle('on', open);
+    clearTimeout(animTimer);
+    if (open) {
+      wrap.classList.remove('anim'); void wrap.offsetWidth;
+      wrap.classList.add('anim');
+      animTimer = setTimeout(() => wrap.classList.remove('anim'), 1400);
+      setTimeout(scrollToActive, 450);
+    } else { wrap.classList.remove('anim'); }
+  }
+  function scrollToActive() {
+    const a = $('sp-list').querySelector('li.active');
+    if (a) a.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+
+  /* ---------- Render ---------- */
+  function renderList() {
+    $('sp-list').innerHTML = TRACKS.map((t, i) => {
+      const cover = t.thumb ? `style="background-image:url('${esc(t.thumb)}')"` : '';
+      return `<li data-i="${i}" style="--i:${i}" class="${i === idx ? 'active' : ''}">` +
+        `<div class="sp-cover" ${cover}>${t.thumb ? '' : '♪'}<span class="num">${i + 1}</span></div>` +
+        `<div class="sp-meta"><div class="sp-name">${esc(t.title || 'Canción ' + (i + 1))}</div>` +
+        `<div class="sp-sub">${i === idx ? 'Reproduciendo' : 'Toca para escuchar'}</div></div>` +
+        `<div class="sp-eq"><b></b><b></b><b></b><b></b></div></li>`;
+    }).join('');
+    $('sp-count').textContent = (idx + 1) + ' / ' + TRACKS.length;
+    $('sp-total').textContent = TRACKS.length + ' canciones';
+    $('sp-now').textContent = TRACKS[idx].title || 'Canción ' + (idx + 1);
+  }
+
+  function go(i, autoplay) {
+    idx = (i + TRACKS.length) % TRACKS.length;
+    near = false;
+    renderList();
+    scrollToActive();
+    if (!controller) return;
+    controller.loadUri('spotify:track:' + TRACKS[idx].id);
+    if (autoplay) setTimeout(() => controller.play(), 500);
+  }
+
+  TRACKS.forEach(t => {
+    fetch('https://open.spotify.com/oembed?url=' +
+          encodeURIComponent('https://open.spotify.com/track/' + t.id))
+      .then(r => r.json())
+      .then(j => { t.title = j.title; t.thumb = j.thumbnail_url; renderList(); })
+      .catch(() => {});
+  });
+  renderList();
+
+  /* ---------- Clics (delegación: siempre funciona) ---------- */
+  root.addEventListener('click', e => {
+    const li = e.target.closest('li[data-i]');
+    if (li) { go(+li.dataset.i, true); return; }
+    const b = e.target.closest('[data-act]');
+    if (!b) return;
+    e.preventDefault(); e.stopPropagation();
+    switch (b.dataset.act) {
+      case 'toggle': setHidden(!isHidden()); break;
+      case 'hide':   setHidden(true); break;
+      case 'list':   toggleList(); break;
+      case 'next':   go(idx + 1, true); break;
+      case 'prev':   go(idx - 1, true); break;
+    }
+  });
+
+  /* ---------- Atajos: M = mostrar/ocultar, L = lista ---------- */
+  document.addEventListener('keydown', e => {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const t = e.target.tagName;
+    if (t === 'INPUT' || t === 'TEXTAREA' || t === 'SELECT' || e.target.isContentEditable) return;
+    const k = e.key.toLowerCase();
+    if (k === 'm') setHidden(!isHidden());
+    if (k === 'l' && !isHidden()) toggleList();
+  });
+
+  /* ---------- Control global (tarjeta 🎵 Música de la portada) ---------- */
+  window.erpMusic = {
+    show:   () => setHidden(false),
+    hide:   () => setHidden(true),
+    toggle: () => setHidden(!isHidden()),
+    list:   () => { setHidden(false); toggleList(true); }
+  };
+
+  /* ---------- API oficial de Spotify ---------- */
+  window.onSpotifyIframeApiReady = IFrameAPI => {
+    IFrameAPI.createController($('sp-embed'), {
+      uri: 'spotify:track:' + TRACKS[0].id, width: '100%', height: 80
+    }, c => {
+      controller = c;
+      c.addListener('playback_update', e => {
+        const d = e.data; if (!d) return;
+        root.classList.toggle('is-playing', !d.isPaused);
+        if (!d.duration) return;
+        if (d.position >= d.duration - 1500) near = true;
+        if (near && (d.isPaused || d.position < 1000)) { near = false; go(idx + 1, true); }
+      });
+    });
+  };
+  const s = document.createElement('script');
+  s.src = 'https://open.spotify.com/embed/iframe-api/v1';
+  s.async = true;
+  document.body.appendChild(s);
+})();
+</script>
+</div>

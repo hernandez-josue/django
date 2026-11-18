@@ -60,7 +60,7 @@ pyphen==0.18.1
 python-bidi==0.6.12
 python-dateutil==2.9.0.post0
 pytz==2026.6
-redis==5.0.1
+redis==6.4.0
 reportlab==4.0.9
 requests==2.34.2
 s3transfer==0.19.3

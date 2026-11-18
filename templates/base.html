@@ -509,6 +509,7 @@
     </script>
     {% block extra_css %}{% endblock %}
 
+
 <!-- Reproductor de música flotante -->
 {% include "_spotify_player.html" %}
 
@@ -818,3 +819,10 @@
 
 </body>
 </html>
+
+<a href="{% url 'catalogo:catalogo' %}" class="erp-nav-link" data-turbo="false">🛒 Tienda</a>
+
+<a href="{% url 'catalogo:carrito' %}" class="erp-nav-link" data-turbo="false" style="position:relative;">
+    🛍️ ({{ carrito_total_items }})
+</a>
+<meta name="turbo-visit-control" content="reload">

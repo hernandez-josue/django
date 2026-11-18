@@ -1,3 +1,8 @@
+# core/settings.py — verificar que existe al inicio:
+from datetime import timedelta   # ← agregar si no está
+
+# (ya debería estar si se instaló dj-database-url en W03)
+
 # core/settings.py  (guardar como UTF-8)
 import environ
 from pathlib import Path
@@ -350,3 +355,30 @@ if TESTING:
     CELERY_TASK_ALWAYS_EAGER = True
     CELERY_TASK_EAGER_PROPAGATES = True
     CELERY_BROKER_URL = 'memory://'
+
+    # core/settings.py — agregar después de CELERY_TASK_ALWAYS_EAGER:
+
+# ── CELERY BEAT — Tareas programadas ──────────────────────────────────────
+from celery.schedules import crontab
+
+CELERY_BEAT_SCHEDULE = {
+
+    # Verificar stock bajo cada hora
+    'verificar-stock-bajo-cada-hora': {
+        'task':     'ventas.verificar_stock_bajo',
+        'schedule': timedelta(hours=1),
+        'args':     (5,),   # umbral = 5 unidades
+        'options':  {'queue': 'erp_django'},
+    },
+
+    # Reporte de ventas diario a las 8:00 AM (hora México)
+    'reporte-ventas-diario-8am': {
+        'task':     'ventas.reporte_ventas_diario',
+        'schedule': crontab(hour=8, minute=0),
+        'options':  {'queue': 'erp_django'},
+    },
+
+}
+
+# Necesario para que Beat use la zona horaria de Django (no UTC)
+CELERY_BEAT_TIMEZONE = TIME_ZONE   # 'America/Mexico_City'

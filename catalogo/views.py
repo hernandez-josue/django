@@ -356,7 +356,20 @@ def pago_exitoso(request, pedido_id: int):
     # ── NUEVO W16: disparar tarea asíncrona de confirmación ───────────
     # .delay() envía la tarea al broker Redis de forma no bloqueante.
     # El worker la ejecutará en segundo plano.
-    enviar_confirmacion_pedido.delay(pedido.pk)
+    try:
+        enviar_confirmacion_pedido.delay(pedido.pk)
+    except Exception as exc:
+        import logging
+        logging.getLogger(__name__).exception(
+            'Error al enviar confirmación del pedido %s: %s',
+            pedido.pk,
+            exc,
+        )
+        messages.warning(
+            request,
+            'Tu pago fue confirmado, pero no fue posible enviar '
+            'el correo de confirmación. Puedes consultar tu pedido.'
+        )
     # ──────────────────────────────────────────────────────────────────
 
     messages.success(

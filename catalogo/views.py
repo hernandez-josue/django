@@ -1,4 +1,4 @@
-﻿
+
 """Vistas del módulo de catálogo y carrito — W13.
 
 Módulo público (no requiere autenticación para lectura).
@@ -266,9 +266,8 @@ def checkout(request):
             # 3. Convertir el total a centavos.
             monto_centavos = int(totales['total'] * 100)
 
-            # 4. Crear pedido y PaymentIntent.
+            # 4. Crear el pedido en una transacci?n breve.
             with transaction.atomic():
-
                 pedido = Pedido.objects.create(
                     numero_pedido=generar_numero_pedido(),
                     cliente=cliente,
@@ -277,16 +276,17 @@ def checkout(request):
                     items_snapshot=snapshot,
                 )
 
-                intent = stripe.PaymentIntent.create(
-                    amount=monto_centavos,
-                    currency='mxn',
-                    metadata={
-                        'pedido_id': pedido.pk,
-                        'pedido_num': pedido.numero_pedido,
-                        'cliente': cliente.nombre,
-                    },
-                    idempotency_key=f'pedido-{pedido.pk}-{pedido.numero_pedido}',
-                )
+            # 5. Solicitar el PaymentIntent fuera de la transacci?n.
+            intent = stripe.PaymentIntent.create(
+                amount=monto_centavos,
+                currency='mxn',
+                metadata={
+                    'pedido_id': pedido.pk,
+                    'pedido_num': pedido.numero_pedido,
+                    'cliente': cliente.nombre,
+                },
+                idempotency_key=f'pedido-{pedido.pk}-{pedido.numero_pedido}',
+            )
 
             # 5. Mostrar formulario de pago.
             return render(

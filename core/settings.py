@@ -99,6 +99,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+        'OPTIONS': {'timeout': 20},
     }
 }
 
@@ -140,7 +141,7 @@ AUTHENTICATION_BACKENDS = [
 ACCOUNT_LOGIN_METHODS      = {'username'}
 ACCOUNT_EMAIL_REQUIRED     = False
 ACCOUNT_EMAIL_VERIFICATION = 'none'
-ACCOUNT_LOGOUT_ON_GET      = True
+ACCOUNT_LOGOUT_ON_GET = False
 ACCOUNT_SESSION_REMEMBER   = True
 
 # ── DRF ───────────────────────────────────────────────────────────────────

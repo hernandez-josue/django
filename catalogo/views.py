@@ -1,4 +1,4 @@
-
+﻿
 """Vistas del módulo de catálogo y carrito — W13.
 
 Módulo público (no requiere autenticación para lectura).
@@ -285,7 +285,7 @@ def checkout(request):
                         'pedido_num': pedido.numero_pedido,
                         'cliente': cliente.nombre,
                     },
-                    idempotency_key=f'pedido-{pedido.pk}',
+                    idempotency_key=f'pedido-{pedido.pk}-{pedido.numero_pedido}',
                 )
 
             # 5. Mostrar formulario de pago.
@@ -303,6 +303,7 @@ def checkout(request):
             )
 
         except stripe.StripeError as exc:
+            import traceback; traceback.print_exc()
             messages.error(
                 request,
                 'Error al conectar con Stripe: '
@@ -392,3 +393,4 @@ def pago_error(request):
         request,
         'catalogo/pago_error.html'
     )
+

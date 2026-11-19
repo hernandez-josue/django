@@ -1,29 +1,43 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 {% load catalogo_extras %}
 {% block title %}Checkout · Proceso de pago{% endblock %}
 
 {% block extra_css %}
 <style>
-    /* Estilos para el Card Element de Stripe */
+    /* Estilos blindados para el Card Element de Stripe */
     #card-element {
-        background: var(--clr-surface);
-        border: 1.5px solid var(--clr-border);
+        background: #ffffff !important;
+        border: 1.5px solid #cbd5e1 !important;
         border-radius: 8px;
-        padding: .75rem 1rem;
-        transition: border-color .2s;
+        padding: 12px 14px;
+        min-height: 46px;
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        transition: border-color .2s, box-shadow .2s;
     }
     #card-element.StripeElement--focus {
-        border-color: var(--clr-sky);
-        box-shadow: 0 0 0 3px rgba(74,144,217,.18);
+        border-color: #4a90d9 !important;
+        box-shadow: 0 0 0 3px rgba(74, 144, 217, .22);
     }
     #card-element.StripeElement--invalid {
-        border-color: var(--clr-danger);
+        border-color: #c0392b !important;
+    }
+    /* Asegura que el iframe interno de Stripe nunca quede con altura 0 ni bloqueado */
+    #card-element iframe,
+    .__PrivateStripeElement iframe {
+        min-height: 24px !important;
+        width: 100% !important;
+        display: block !important;
+        pointer-events: auto !important;
+        opacity: 1 !important;
     }
     #card-errors {
-        color: var(--clr-danger);
+        color: #c0392b;
         font-size: .85rem;
-        margin-top: .4rem;
+        margin-top: .45rem;
         min-height: 1.2rem;
+        font-weight: 500;
     }
     #submit-btn:disabled {
         opacity: .7;
@@ -109,19 +123,18 @@
             <div class="erp-card-header">🔒 Datos de pago</div>
 
             {% if client_secret %}
-            <!-- Formulario de tarjeta con Stripe.js -->
             <p style="color:var(--clr-muted);font-size:.85rem;margin-bottom:1rem;">
                 Tus datos de pago son procesados de forma segura por Stripe.
                 Nunca pasan por nuestros servidores.
             </p>
 
             <div class="mb-4">
-                <label class="erp-label">Número de tarjeta</label>
+                <label for="card-element" class="erp-label">Número de tarjeta</label>
                 <div id="card-element"></div>
                 <div id="card-errors" role="alert"></div>
             </div>
 
-            <button id="submit-btn" class="btn-erp-gold"
+            <button id="submit-btn" type="button" class="btn-erp-gold"
                     style="width:100%;padding:.6rem;font-size:1rem;">
                 🔐 Confirmar pago de ${{ totales.total }}
             </button>
@@ -133,7 +146,6 @@
             </p>
 
             {% else %}
-            <!-- GET: iniciar proceso con POST -->
             <p style="margin-bottom:1.5rem;color:var(--clr-muted);">
                 Haz clic en "Proceder al pago" para generar
                 tu pedido e introducir los datos de tu tarjeta.
@@ -156,57 +168,73 @@
 {% if client_secret %}
 <script src="https://js.stripe.com/v3/"></script>
 <script>
-(function () {
-    'use strict';
+document.addEventListener('DOMContentLoaded', function () {
+    const errorDiv = document.getElementById('card-errors');
+    const pubKey = '{{ publishable_key|escapejs }}'.trim();
+    const clientSecret = '{{ client_secret|escapejs }}'.trim();
 
-    const stripe     = Stripe('{{ publishable_key }}');
-    const elements   = stripe.elements();
-    const clientSecret = '{{ client_secret }}';
+    if (typeof Stripe === 'undefined') {
+        errorDiv.textContent = 'No se pudo cargar Stripe.js (revisa tu conexión o bloqueador de anuncios).';
+        return;
+    }
 
-    // Crear el Card Element con estilos Fable 5 AzulERP
-    const card = elements.create('card', {
-        style: {
-            base: {
-                fontFamily: "'Inter', 'Segoe UI', sans-serif",
-                fontSize: '15px',
-                color: getComputedStyle(document.documentElement)
-                            .getPropertyValue('--clr-text').trim() || '#1A1A2E',
-                '::placeholder': { color: '#8AA0B8' },
+    if (!pubKey || !pubKey.startsWith('pk_')) {
+        errorDiv.textContent = 'Error de configuración: STRIPE_PUBLISHABLE_KEY inválida o vacía.';
+        return;
+    }
+
+    try {
+        const stripe = Stripe(pubKey);
+        const elements = stripe.elements();
+
+        const card = elements.create('card', {
+            hidePostalCode: true,
+            style: {
+                base: {
+                    fontFamily: "'Inter', 'Segoe UI', sans-serif",
+                    fontSize: '15px',
+                    color: '#1a1a2e',
+                    iconColor: '#1a1a2e',
+                    '::placeholder': { color: '#8aa0b8' },
+                },
+                invalid: {
+                    color: '#c0392b',
+                    iconColor: '#c0392b',
+                },
             },
-            invalid: { color: '#C0392B', iconColor: '#C0392B' },
-        },
-    });
-    card.mount('#card-element');
+        });
 
-    // Mostrar errores en tiempo real (p. ej. número inválido)
-    card.on('change', function (event) {
-        const errorDiv = document.getElementById('card-errors');
-        errorDiv.textContent = event.error ? event.error.message : '';
-    });
+        card.mount('#card-element');
 
-    // Manejar el submit del botón de pago
-    const btn = document.getElementById('submit-btn');
-    btn.addEventListener('click', async function () {
-        btn.disabled     = true;
-        btn.textContent  = '⏳ Procesando…';
+        card.on('change', function (event) {
+            errorDiv.textContent = event.error ? event.error.message : '';
+        });
 
-        const { error, paymentIntent } = await stripe.confirmCardPayment(
-            clientSecret,
-            { payment_method: { card: card } }
-        );
+        const btn = document.getElementById('submit-btn');
+        btn.addEventListener('click', async function () {
+            btn.disabled = true;
+            btn.textContent = '⏳ Procesando…';
+            errorDiv.textContent = '';
 
-        if (error) {
-            // Mostrar el error y habilitar el botón de nuevo
-            document.getElementById('card-errors').textContent = error.message;
-            btn.disabled    = false;
-            btn.textContent = '🔐 Confirmar pago de ${{ totales.total }}';
-        } else if (paymentIntent.status === 'succeeded') {
-            // Redirigir a la vista de éxito
-            const pedidoId = '{{ pedido.pk }}';
-            window.location.href = `/catalogo/pago-exitoso/${pedidoId}/`;
-        }
-    });
-})();
+            const { error, paymentIntent } = await stripe.confirmCardPayment(
+                clientSecret,
+                { payment_method: { card: card } }
+            );
+
+            if (error) {
+                errorDiv.textContent = error.message;
+                btn.disabled = false;
+                btn.textContent = '🔐 Confirmar pago de ${{ totales.total }}';
+            } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+                const pedidoId = '{{ pedido.pk }}';
+                window.location.href = `/catalogo/pago-exitoso/${pedidoId}/`;
+            }
+        });
+    } catch (err) {
+        errorDiv.textContent = 'Error al inicializar tarjeta: ' + err.message;
+        console.error(err);
+    }
+});
 </script>
 {% endif %}
 {% endblock %}

@@ -115,3 +115,7 @@ if _bucket:
     AWS_QUERYSTRING_AUTH  = False       # URLs públicas (sin firma)
     MEDIA_URL             = f'https://{_bucket}.s3.amazonaws.com/'
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# CELERY: ejecucion directa en Render gratuito
+CELERY_TASK_ALWAYS_EAGER = True
+CELERY_TASK_EAGER_PROPAGATES = True

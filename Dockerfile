@@ -1,3 +1,4 @@
+
 # Imagen base: Python 3.11 mínima
 FROM python:3.11-slim
 
@@ -33,12 +34,5 @@ RUN python manage.py collectstatic --no-input \
 # Puerto
 EXPOSE 8000
 
-# Migraciones + creación del administrador + Gunicorn
-CMD python -m pip show Pillow && \
-    python manage.py migrate --no-input && \
-    python manage.py shell -c "import os; from django.contrib.auth import get_user_model; User=get_user_model(); username=os.environ.get('DJANGO_SUPERUSER_USERNAME'); email=os.environ.get('DJANGO_SUPERUSER_EMAIL'); password=os.environ.get('DJANGO_SUPERUSER_PASSWORD'); user,created=User.objects.get_or_create(username=username, defaults={'email':email}); user.email=email; user.is_staff=True; user.is_superuser=True; user.set_password(password); user.save()" && \
-    gunicorn core.wsgi:application \
-    --bind 0.0.0.0:$PORT \
-    --workers 2 \
-    --timeout 120 \
-    --log-file -
+# Migraciones + validación del administrador + Gunicorn
+CMD ["sh", "-c", "python -m pip show Pillow && python manage.py migrate --no-input && python -c \"import os,sys; keys=['DJANGO_SUPERUSER_USERNAME','DJANGO_SUPERUSER_EMAIL','DJANGO_SUPERUSER_PASSWORD']; missing=[k for k in keys if not os.environ.get(k,'').strip()]; print('Variables de administrador faltantes:', missing); sys.exit(1) if missing else None\" && python manage.py shell -c \"import os; from django.contrib.auth import get_user_model; User=get_user_model(); username=os.environ['DJANGO_SUPERUSER_USERNAME'].strip(); email=os.environ['DJANGO_SUPERUSER_EMAIL'].strip(); password=os.environ['DJANGO_SUPERUSER_PASSWORD'].strip(); user,created=User.objects.get_or_create(username=username, defaults={'email':email}); user.email=email; user.is_staff=True; user.is_superuser=True; user.set_password(password); user.save(); print('Administrador configurado:', username)\" && gunicorn core.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120 --log-file -"]

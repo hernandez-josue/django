@@ -248,7 +248,7 @@ ADMINS = [
 ]
 
 # Configuración de django-anymail (SendGrid)
-SENDGRID_API_KEY = env('SENDGRID_API_KEY', default='')
+SENDGRID_API_KEY = env('SENDGRID_API_KEY', default='').strip()
 ANYMAIL = {
     'SENDGRID_API_KEY': SENDGRID_API_KEY,
     # Reintentar envíos fallidos automáticamente

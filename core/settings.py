@@ -230,7 +230,7 @@ JAZZMIN_SETTINGS = {
 # En producción: anymail con SendGrid
 EMAIL_BACKEND = env(
     'EMAIL_BACKEND',
-    default='django.core.mail.backends.console.EmailBackend'
+    default='anymail.backends.sendgrid.EmailBackend'
 )
 
 # Dirección del remitente visible en los correos

@@ -251,10 +251,6 @@ ADMINS = [
 SENDGRID_API_KEY = env('SENDGRID_API_KEY', default='').strip()
 ANYMAIL = {
     'SENDGRID_API_KEY': SENDGRID_API_KEY,
-    # Reintentar envíos fallidos automáticamente
-    'SEND_DEFAULTS': {
-        'esp_extra': {'ip_pool_name': 'transactional'},
-    },
 }
 
 # core/settings.py — agregar al final (antes de JAZZMIN_SETTINGS):

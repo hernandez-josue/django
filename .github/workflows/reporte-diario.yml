@@ -16,7 +16,7 @@ jobs:
         env:
           REPORTE_HORA_MX: ${{ vars.REPORTE_HORA_MX }}
           REPORTE_DIARIO_TOKEN: ${{ secrets.REPORTE_DIARIO_TOKEN }}
-          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          EVENT_NAME: ${{ github.event_name }}
         run: |
           set -euo pipefail
 
@@ -29,7 +29,7 @@ jobs:
           echo "Hora actual en México: $HORA_ACTUAL"
           echo "Hora configurada: $REPORTE_HORA_MX"
 
-          if [[ "$GITHUB_EVENT_NAME" != "workflow_dispatch" && "$HORA_ACTUAL" != "$REPORTE_HORA_MX" ]]; then
+          if [[ "$EVENT_NAME" != "workflow_dispatch" && "$HORA_ACTUAL" != "$REPORTE_HORA_MX" ]]; then
             echo "Todavía no es la hora del reporte."
             exit 0
           fi
@@ -45,3 +45,4 @@ jobs:
             --header "Authorization: Bearer $REPORTE_DIARIO_TOKEN" \
             --header "Content-Type: application/json" \
             https://django-w4le.onrender.com/api/interno/reporte-diario/
+

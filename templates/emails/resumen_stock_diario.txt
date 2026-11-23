@@ -1,0 +1,20 @@
+﻿RESUMEN DIARIO DE INVENTARIO - ERP DJANGO
+
+Fecha del reporte: {{ fecha }}
+Umbral de stock bajo: {{ umbral }} unidades
+
+Productos que requieren atención: {{ total_productos }}
+
+{% if productos_bajos %}
+PRODUCTOS CON STOCK BAJO:
+
+{% for prod in productos_bajos %}
+- {{ prod.nombre }} | Categoría: {{ prod.categoria__nombre }} | Stock: {{ prod.stock }}
+{% endfor %}
+
+{% else %}
+No hay productos con existencias por debajo del umbral.
+El inventario está sin alertas.
+{% endif %}
+
+Este mensaje fue generado automáticamente por ERP Django.

@@ -1,5 +1,5 @@
 # core/settings.py — verificar que existe al inicio:
-from datetime import timedelta   # ← agregar si no está
+from datetime import datetime, timedelta   # ← agregar si no está
 
 # (ya debería estar si se instaló dj-database-url en W03)
 
@@ -358,6 +358,16 @@ if TESTING:
 # ── CELERY BEAT — Tareas programadas ──────────────────────────────────────
 from celery.schedules import crontab
 
+# Hora configurable para el resumen diario de inventario
+ALERTA_STOCK_HORA = env('ALERTA_STOCK_HORA', default='08:00')
+
+try:
+    _hora_stock = datetime.strptime(ALERTA_STOCK_HORA, '%H:%M')
+except ValueError:
+    raise ValueError(
+        "ALERTA_STOCK_HORA debe tener el formato HH:MM, por ejemplo 08:00"
+    )
+
 CELERY_BEAT_SCHEDULE = {
 
     # Verificar stock bajo cada hora
@@ -375,7 +385,11 @@ CELERY_BEAT_SCHEDULE = {
         'options':  {'queue': 'erp_django'},
     },
 
-}
-
-# Necesario para que Beat use la zona horaria de Django (no UTC)
+    # Resumen diario de inventario
+    'resumen-stock-diario': {
+        'task': 'ventas.resumen_stock_diario',
+        'schedule': crontab(hour=_hora_stock.hour, minute=_hora_stock.minute),
+        'options': {'queue': 'erp_django'},
+    },
+}# Necesario para que Beat use la zona horaria de Django (no UTC)
 CELERY_BEAT_TIMEZONE = TIME_ZONE   # 'America/Mexico_City'

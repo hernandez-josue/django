@@ -352,3 +352,97 @@ def _enviar_reporte_ventas(
         logger.info(f'[reporte_diario] Reporte enviado a {admin_correo}.')
     except Exception as exc:
         logger.error(f'[reporte_diario] Error al enviar reporte: {exc}')
+
+@shared_task(name='ventas.resumen_stock_diario')
+def resumen_stock_diario(umbral=5):
+    """
+    Envía diariamente un resumen del inventario y los productos
+    cuyo stock está por debajo del umbral configurado.
+    """
+    from django.conf import settings
+    from django.core.mail import EmailMultiAlternatives
+    from django.template.loader import render_to_string
+    from django.utils import timezone
+    from productos.models import Producto
+    import logging
+
+    tarea_logger = logging.getLogger(__name__)
+
+    hoy = timezone.localdate()
+
+    productos_bajos = list(
+        Producto.objects
+        .select_related('categoria')
+        .filter(activo=True, stock__lt=umbral)
+        .values(
+            'pk',
+            'nombre',
+            'stock',
+            'categoria__nombre'
+        )
+        .order_by('stock', 'nombre')
+    )
+
+    fecha_str = hoy.strftime('%d/%m/%Y')
+
+    contexto = {
+        'fecha': fecha_str,
+        'umbral': umbral,
+        'total_productos': len(productos_bajos),
+        'productos_bajos': productos_bajos,
+    }
+
+    if not settings.ADMINS:
+        tarea_logger.warning(
+            '[resumen_stock_diario] No hay administradores configurados.'
+        )
+        return {
+            'fecha': str(hoy),
+            'total_productos': len(productos_bajos),
+            'correo_enviado': False,
+        }
+
+    admin_nombre, admin_correo = settings.ADMINS[0]
+
+    asunto = f'Resumen diario de inventario - {fecha_str}'
+
+    texto_plano = render_to_string(
+        'emails/resumen_stock_diario.txt',
+        contexto
+    )
+
+    html_body = render_to_string(
+        'emails/resumen_stock_diario.html',
+        contexto
+    )
+
+    mensaje = EmailMultiAlternatives(
+        subject=asunto,
+        body=texto_plano,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=[admin_correo],
+    )
+
+    mensaje.attach_alternative(html_body, 'text/html')
+
+    try:
+        enviados = mensaje.send(fail_silently=False)
+
+        tarea_logger.info(
+            '[resumen_stock_diario] Correo enviado a %s. Productos bajos: %s.',
+            admin_correo,
+            len(productos_bajos)
+        )
+
+        return {
+            'fecha': str(hoy),
+            'total_productos': len(productos_bajos),
+            'correo_enviado': bool(enviados),
+            'destinatario': admin_correo,
+        }
+
+    except Exception:
+        tarea_logger.exception(
+            '[resumen_stock_diario] Error al enviar el correo.'
+        )
+        raise

@@ -73,3 +73,12 @@ urlpatterns += [
         name='probar_reporte_ventas',
     ),
 ]
+
+# Endpoint protegido para el reporte diario automático
+urlpatterns += [
+    path(
+        'api/interno/reporte-diario/',
+        views.ejecutar_reporte_diario,
+        name='ejecutar_reporte_diario',
+    ),
+]

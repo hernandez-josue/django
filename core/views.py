@@ -84,3 +84,34 @@ def probar_reporte_ventas(request):
         "admin/reporte_prueba.html",
         {"resultado": resultado, "error": error},
     )
+
+# ENDPOINT PROTEGIDO PARA EL REPORTE DIARIO DESDE GITHUB ACTIONS
+import secrets
+
+from django.conf import settings
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+
+
+@csrf_exempt
+@require_POST
+def ejecutar_reporte_diario(request):
+    token_configurado = getattr(settings, "REPORTE_DIARIO_TOKEN", "")
+
+    if not token_configurado:
+        return JsonResponse({"error": "Servicio no configurado"}, status=503)
+
+    autorizacion = request.headers.get("Authorization", "")
+    token_recibido = autorizacion.removeprefix("Bearer ").strip()
+
+    if not secrets.compare_digest(token_recibido, token_configurado):
+        return JsonResponse({"error": "No autorizado"}, status=403)
+
+    try:
+        from ventas.tasks import reporte_ventas_diario
+        resultado = reporte_ventas_diario.run()
+        return JsonResponse({"ok": True, "resultado": str(resultado)})
+    except Exception:
+        logger_reporte.exception("Error ejecutando reporte diario desde GitHub Actions")
+        return JsonResponse({"error": "Error al generar el reporte"}, status=500)

@@ -396,3 +396,6 @@ CELERY_BEAT_TIMEZONE = TIME_ZONE   # 'America/Mexico_City'
 
 # Dominio p?blico utilizado en enlaces de correo.
 SITE_URL = env('SITE_URL', default='https://django-w4le.onrender.com')
+
+# Clave privada para activar el reporte diario desde GitHub Actions
+REPORTE_DIARIO_TOKEN = env('REPORTE_DIARIO_TOKEN', default='').strip()

@@ -55,3 +55,32 @@ def bienvenida(request):
         },
     ]
     return render(request, 'bienvenida.html', {'modulos': modulos})
+
+
+# PRUEBA TEMPORAL DEL REPORTE DIARIO
+import logging
+from django.contrib.admin.views.decorators import staff_member_required
+from django.views.decorators.http import require_http_methods
+
+logger_reporte = logging.getLogger(__name__)
+
+
+@staff_member_required
+@require_http_methods(["GET", "POST"])
+def probar_reporte_ventas(request):
+    resultado = None
+    error = None
+
+    if request.method == "POST":
+        try:
+            from ventas.tasks import reporte_ventas_diario
+            resultado = reporte_ventas_diario.run()
+        except Exception:
+            logger_reporte.exception("Error ejecutando reporte de ventas")
+            error = "Error al generar el reporte. Revisa los logs de Render."
+
+    return render(
+        request,
+        "admin/reporte_prueba.html",
+        {"resultado": resultado, "error": error},
+    )

@@ -63,3 +63,13 @@ from django.conf import settings
 urlpatterns += [
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
 ]
+
+
+# Ruta temporal para probar el reporte diario
+urlpatterns += [
+    path(
+        'prueba-reporte-ventas/',
+        views.probar_reporte_ventas,
+        name='probar_reporte_ventas',
+    ),
+]

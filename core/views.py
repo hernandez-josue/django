@@ -105,7 +105,7 @@ def ejecutar_reporte_diario(request):
     autorizacion = request.headers.get("Authorization", "")
     token_recibido = autorizacion.removeprefix("Bearer ").strip()
 
-    if not secrets.compare_digest(token_recibido, token_configurado):
+    if not secrets.compare_digest(token_recibido.encode('utf-8'), token_configurado.encode('utf-8')):
         return JsonResponse({"error": "No autorizado"}, status=403)
 
     try:

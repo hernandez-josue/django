@@ -393,3 +393,6 @@ CELERY_BEAT_SCHEDULE = {
     },
 }# Necesario para que Beat use la zona horaria de Django (no UTC)
 CELERY_BEAT_TIMEZONE = TIME_ZONE   # 'America/Mexico_City'
+
+# Dominio p?blico utilizado en enlaces de correo.
+SITE_URL = env('SITE_URL', default='https://django-w4le.onrender.com')

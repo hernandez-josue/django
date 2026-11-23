@@ -13,6 +13,8 @@ from decimal import Decimal
 from celery import shared_task
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
+from django.core import signing
+from django.urls import reverse
 from django.template.loader import render_to_string
 from django.utils import timezone
 
@@ -65,10 +67,15 @@ def enviar_confirmacion_pedido(self, pedido_id: int) -> dict:
 
     # ── Construir contexto del correo ───────────────────────────────────
     items = pedido.items_snapshot or []
-    url_pedido = (
-        f"https://erp-django-utec.onrender.com"
-        f"/ventas/{pedido.pk}/"
+    token = signing.dumps(
+        str(pedido.pk),
+        salt='ventas.pedido.detalle',
     )
+    ruta_pedido = reverse(
+        'catalogo:pedido_detalle',
+        kwargs={'pedido_id': pedido.pk, 'token': token},
+    )
+    url_pedido = f"{settings.SITE_URL.rstrip('/')}{ruta_pedido}"
 
     contexto = {
         'pedido':     pedido,

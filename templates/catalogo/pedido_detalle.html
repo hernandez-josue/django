@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pedido {{ pedido.numero_pedido }}</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f3f5f8;color:#17243a;margin:0;padding:24px}
+main{max-width:760px;margin:25px auto;background:white;padding:30px;border-radius:12px}
+h1{color:#0a2342}
+.estado{display:inline-block;background:#e8f0fb;padding:8px 14px;border-radius:20px}
+table{width:100%;border-collapse:collapse;margin-top:22px}
+th,td{padding:12px;border-bottom:1px solid #e5e9ef;text-align:left}
+th:last-child,td:last-child{text-align:right}
+.total{text-align:right;font-size:21px;font-weight:bold;margin-top:24px;color:#9a7010}
+small{color:#64748b}
+</style>
+</head>
+<body>
+<main>
+<h1>Detalle de tu pedido</h1>
+<h2>{{ pedido.numero_pedido }}</h2>
+<p>Cliente: <strong>{{ pedido.cliente.nombre }}</strong></p>
+<p>Fecha: {{ pedido.fecha_pedido|date:"d/m/Y H:i" }}</p>
+<p>Estado: <span class="estado">{{ pedido.get_estado_display }}</span></p>
+
+{% if items %}
+<table>
+<thead>
+<tr><th>Producto</th><th>Precio</th><th>Cantidad</th><th>Subtotal</th></tr>
+</thead>
+<tbody>
+{% for item in items %}
+<tr>
+<td>{{ item.nombre }}</td>
+<td>${{ item.precio }}</td>
+<td>{{ item.cantidad }}</td>
+<td>${{ item.subtotal }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% else %}
+<p>No hay productos registrados en el detalle de este pedido.</p>
+{% endif %}
+
+<p class="total">Total pagado: ${{ pedido.total_pagado }}</p>
+<p><small>Consulta privada mediante enlace firmado. Si necesitas ayuda, contacta al restaurante.</small></p>
+</main>
+</body>
+</html>

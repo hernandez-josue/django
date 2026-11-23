@@ -14,6 +14,8 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from django.core import signing
+from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import ListView
 
@@ -394,3 +396,39 @@ def pago_error(request):
         'catalogo/pago_error.html'
     )
 
+
+
+# ?? DETALLE SEGURO DEL PEDIDO ?????????????????????????????????????????????
+
+def pedido_detalle(request, pedido_id: int, token: str):
+    """Muestra un pedido mediante un enlace firmado con vigencia de 30 d?as."""
+    try:
+        pedido_firmado = signing.loads(
+            token,
+            salt='ventas.pedido.detalle',
+            max_age=60 * 60 * 24 * 30,
+        )
+    except signing.BadSignature:
+        return HttpResponseForbidden(
+            'Este enlace no es v?lido o ha caducado. '
+            'Solicita ayuda al restaurante.'
+        )
+
+    if pedido_firmado != str(pedido_id):
+        return HttpResponseForbidden(
+            'El enlace no corresponde a este pedido.'
+        )
+
+    pedido = get_object_or_404(
+        Pedido.objects.select_related('cliente'),
+        pk=pedido_id,
+    )
+
+    return render(
+        request,
+        'catalogo/pedido_detalle.html',
+        {
+            'pedido': pedido,
+            'items': pedido.items_snapshot or [],
+        },
+    )

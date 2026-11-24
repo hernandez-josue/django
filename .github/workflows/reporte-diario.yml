@@ -3,10 +3,9 @@ name: Reporte diario de ventas
 
 on:
   schedule:
-    - cron: '35 0 * * *'
+    - cron: '50 18 * * *'
+      timezone: "America/Mexico_City"
   workflow_dispatch:
-permissions:
-  contents: read
 
 jobs:
   enviar-reporte:

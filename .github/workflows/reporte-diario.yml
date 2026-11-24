@@ -1,13 +1,13 @@
 
 name: Reporte diario de ventas
 
+- cron: 'MINUTO HORA * * *'
 
 on:
   schedule:
-    - cron: '50 18 * * *'
+    - cron: '53 18 * * *'
       timezone: "America/Mexico_City"
   workflow_dispatch:
-
 
 jobs:
   enviar-reporte:

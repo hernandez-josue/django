@@ -82,3 +82,9 @@ urlpatterns += [
         name='ejecutar_reporte_diario',
     ),
 ]
+
+
+# Cron externo: reporte diario
+from django.urls import path as _path
+from ventas.views import cron_reporte_diario as _cron_reporte_diario
+urlpatterns += [_path('cron/reporte-diario/', _cron_reporte_diario)]

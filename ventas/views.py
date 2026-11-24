@@ -197,3 +197,25 @@ class VentaDeleteView(LoginRequiredMixin, DeleteView):
         response = super().form_valid(form)
         messages.success(self.request, f'Venta #{pk} eliminada.')
         return response
+
+
+# --- Cron externo: reporte diario (GitHub Actions) ---
+import secrets as _secrets
+from django.conf import settings as _settings
+from django.http import JsonResponse as _JsonResponse, HttpResponseForbidden as _Forbidden
+from django.views.decorators.csrf import csrf_exempt as _csrf_exempt
+from django.views.decorators.http import require_POST as _require_POST
+
+
+@_csrf_exempt
+@_require_POST
+def cron_reporte_diario(request):
+    esperado = getattr(_settings, 'CRON_TOKEN', '')
+    recibido = request.headers.get('X-Cron-Token', '')
+    if not esperado or not _secrets.compare_digest(
+            recibido.encode(), esperado.encode()):
+        return _Forbidden('forbidden')
+
+    from ventas.tasks import reporte_ventas_diario
+    resultado = reporte_ventas_diario()
+    return _JsonResponse({'ok': True, 'resultado': resultado})

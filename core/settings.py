@@ -399,3 +399,8 @@ SITE_URL = env('SITE_URL', default='https://django-w4le.onrender.com')
 
 # Clave privada para activar el reporte diario desde GitHub Actions
 REPORTE_DIARIO_TOKEN = env('REPORTE_DIARIO_TOKEN', default='').strip()
+
+
+# Token para disparar el reporte diario desde GitHub Actions
+import os as _os
+CRON_TOKEN = _os.environ.get('CRON_TOKEN', '')

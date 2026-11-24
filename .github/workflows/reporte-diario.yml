@@ -1,8 +1,9 @@
-﻿name: Reporte diario de ventas
+
+name: Reporte diario de ventas
 
 on:
   schedule:
-    - cron: '8 0 * * *'
+    - cron: '13 0 * * *'
   workflow_dispatch:
 
 permissions:
@@ -45,4 +46,3 @@ jobs:
             --header "Authorization: Bearer $REPORTE_DIARIO_TOKEN" \
             --header "Content-Type: application/json" \
             https://django-w4le.onrender.com/api/interno/reporte-diario/
-

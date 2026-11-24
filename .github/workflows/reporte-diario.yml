@@ -1,10 +1,9 @@
 
-
 name: Reporte diario de ventas
 
 on:
   schedule:
-    - cron: '54 18 * * *'
+    - cron: '57 18 * * *'
       timezone: "America/Mexico_City"
   workflow_dispatch:
 
@@ -20,12 +19,10 @@ jobs:
           REPORTE_DIARIO_TOKEN: ${{ secrets.REPORTE_DIARIO_TOKEN }}
         run: |
           set -euo pipefail
-
           if [[ -z "$REPORTE_DIARIO_TOKEN" ]]; then
             echo "Falta configurar REPORTE_DIARIO_TOKEN."
             exit 1
           fi
-
           curl --fail --silent --show-error --max-time 60 \
             --retry 2 --retry-delay 10 \
             --request POST \

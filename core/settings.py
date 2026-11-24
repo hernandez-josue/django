@@ -404,3 +404,5 @@ REPORTE_DIARIO_TOKEN = env('REPORTE_DIARIO_TOKEN', default='').strip()
 # Token para disparar el reporte diario desde GitHub Actions
 import os as _os
 CRON_TOKEN = _os.environ.get('CRON_TOKEN', '')
+
+REPORTE_DIARIO_HORA = _os.environ.get('REPORTE_DIARIO_HORA', '08:00')

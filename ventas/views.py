@@ -219,3 +219,38 @@ def cron_reporte_diario(request):
     from ventas.tasks import reporte_ventas_diario
     resultado = reporte_ventas_diario()
     return _JsonResponse({'ok': True, 'resultado': resultado})
+
+# --- Cron externo: reporte a la hora de REPORTE_DIARIO_HORA ---
+@_csrf_exempt
+@_require_POST
+def cron_reporte_programado(request):
+    from datetime import timedelta
+    from django.core.cache import cache
+    from django.utils import timezone
+
+    esperado = getattr(_settings, 'CRON_TOKEN', '')
+    recibido = request.headers.get('X-Cron-Token', '')
+    if not esperado or not _secrets.compare_digest(
+            recibido.encode(), esperado.encode()):
+        return _Forbidden('forbidden')
+
+    hora = getattr(_settings, 'REPORTE_DIARIO_HORA', '08:00')
+    try:
+        hh, mm = (int(x) for x in hora.split(':'))
+    except ValueError:
+        hh, mm = 8, 0
+
+    ahora = timezone.localtime()
+    programada = ahora.replace(hour=hh, minute=mm, second=0, microsecond=0)
+    if not (programada <= ahora < programada + timedelta(minutes=10)):
+        return _JsonResponse({'ok': True, 'enviado': False,
+                              'motivo': 'fuera de la hora programada',
+                              'hora_programada': hora})
+
+    if not cache.add(f'reporte_diario:{ahora.date()}', 1, 60 * 60 * 24):
+        return _JsonResponse({'ok': True, 'enviado': False,
+                              'motivo': 'ya se envio hoy'})
+
+    from ventas.tasks import reporte_ventas_diario
+    resultado = reporte_ventas_diario()
+    return _JsonResponse({'ok': True, 'enviado': True, 'resultado': resultado})

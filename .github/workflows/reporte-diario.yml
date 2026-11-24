@@ -1,42 +1,28 @@
 
-name: Reporte diario de ventas
 
-- cron: 'MINUTO HORA * * *'
+name: Reporte diario de ventas
 
 on:
   schedule:
-    - cron: '53 18 * * *'
+    - cron: '54 18 * * *'
       timezone: "America/Mexico_City"
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   enviar-reporte:
     runs-on: ubuntu-latest
     steps:
-      - name: Revisar horario y enviar reporte
+      - name: Enviar reporte de ventas
         env:
-          REPORTE_HORA_MX: ${{ vars.REPORTE_HORA_MX }}
           REPORTE_DIARIO_TOKEN: ${{ secrets.REPORTE_DIARIO_TOKEN }}
-          EVENT_NAME: ${{ github.event_name }}
         run: |
           set -euo pipefail
 
-          if [[ ! "$REPORTE_HORA_MX" =~ ^([01][0-9]|2[0-3])$ ]]; then
-            echo "Configura REPORTE_HORA_MX con una hora entre 00 y 23."
-            exit 1
-          fi
-
-          HORA_ACTUAL=$(TZ=America/Mexico_City date +%H)
-          echo "Hora actual en México: $HORA_ACTUAL"
-          echo "Hora configurada: $REPORTE_HORA_MX"
-
-          if [[ "$EVENT_NAME" != "workflow_dispatch" && "$HORA_ACTUAL" != "$REPORTE_HORA_MX" ]]; then
-            echo "Todavía no es la hora del reporte."
-            exit 0
-          fi
-
           if [[ -z "$REPORTE_DIARIO_TOKEN" ]]; then
-            echo "Falta configurar el secreto REPORTE_DIARIO_TOKEN."
+            echo "Falta configurar REPORTE_DIARIO_TOKEN."
             exit 1
           fi
 

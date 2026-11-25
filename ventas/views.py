@@ -254,3 +254,23 @@ def cron_reporte_programado(request):
     from ventas.tasks import reporte_ventas_diario
     resultado = reporte_ventas_diario()
     return _JsonResponse({'ok': True, 'enviado': True, 'resultado': resultado})
+
+
+# --- Cron externo: alerta de stock bajo ---
+@_csrf_exempt
+@_require_POST
+def cron_stock_bajo(request):
+    esperado = getattr(_settings, 'CRON_TOKEN', '')
+    recibido = request.headers.get('X-Cron-Token', '')
+    if not esperado or not _secrets.compare_digest(
+            recibido.encode(), esperado.encode()):
+        return _Forbidden('forbidden')
+
+    try:
+        umbral = int(request.GET.get('umbral', 5))
+    except ValueError:
+        umbral = 5
+
+    from ventas.tasks import verificar_stock_bajo
+    resultado = verificar_stock_bajo(umbral)
+    return _JsonResponse({'ok': True, 'umbral': umbral, 'resultado': resultado})

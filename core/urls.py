@@ -91,3 +91,8 @@ urlpatterns += [_path('cron/reporte-diario/', _cron_reporte_diario)]
 
 from ventas.views import cron_reporte_programado as _cron_reporte_programado
 urlpatterns += [_path('cron/reporte-programado/', _cron_reporte_programado)]
+
+
+
+from ventas.views import cron_stock_bajo as _cron_stock_bajo
+urlpatterns += [_path('cron/stock-bajo/', _cron_stock_bajo)]
